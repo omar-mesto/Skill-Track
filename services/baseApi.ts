@@ -22,7 +22,7 @@ export function useAPI<T>(
     })
 }
 export const api = $fetch.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://localhost:5000/api',
     onRequest({ options }) {
         options.headers.set('Accept', 'application/json')
         options.headers.set('Authorization', `Bearer ${useGlobalStore().token}`)

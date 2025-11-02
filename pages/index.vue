@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 
 </script>
+
 <template>
   <div>
-    omar
+    Skill Track
   </div>
 </template>
 
