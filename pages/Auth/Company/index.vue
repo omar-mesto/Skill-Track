@@ -46,7 +46,7 @@ const companyLoginFunction = async (userData: loginModel) => {
     </Auth>
     <div class="w-1/2 bg-primary md:grid hidden h-screen place-items-center">
       <img
-        src="../../../public/StudentLogin.png"
+        src="../../../public/CompanyLogin.png"
         loading="lazy"
         class="w-full md:w-xl"
       >

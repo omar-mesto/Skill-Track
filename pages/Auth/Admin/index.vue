@@ -19,7 +19,7 @@ const adminLoginFunction = async (userData: loginModel) => {
 </script>
 
 <template>
-  <div class="w-full h-dvh flex flex-col md:flex-row">
+  <div class="w-full bg-white text-black h-dvh flex flex-col md:flex-row">
     <Auth :login-function="adminLoginFunction">
       <p class="text-lg md:text-3xl font-bold text-black mt-16">
         Admin Login

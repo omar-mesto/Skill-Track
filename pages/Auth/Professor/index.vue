@@ -19,7 +19,7 @@ const professorLoginFunction = async (userData: loginModel) => {
 </script>
 
 <template>
-  <div class="w-full h-dvh flex flex-col md:flex-row">
+  <div class="w-full bg-white text-black h-dvh flex flex-col md:flex-row">
     <Auth :login-function="professorLoginFunction">
       <p class="text-lg md:text-3xl font-bold text-black mt-16">
         Professor Login
@@ -46,7 +46,7 @@ const professorLoginFunction = async (userData: loginModel) => {
     </Auth>
     <div class="w-1/2 bg-primary md:grid hidden h-screen place-items-center">
       <img
-        src="../../../public/StudentLogin.png"
+        src="../../../public/ProfessorLogin.png"
         loading="lazy"
         class="w-full md:w-xl"
       >

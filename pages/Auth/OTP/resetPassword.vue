@@ -1,29 +1,38 @@
 <script lang="ts" setup>
-import { useforgetPassword } from '@@/queries/Auth/forgetPassword'
-import { useGlobalStore } from '@@/stores/global'
-import { forgetPasswordSchema } from '@@/schema/forgetPasswordSchema'
+import { useUpdatePassword } from '@@/queries/Auth/forgetPassword'
+import { updatePasswordSchema } from '@@/schema/updatePasswordSchema'
 
-const forgetPasswordForm = ref({
-  email: '',
+const updatePasswordForm = ref({
+  newPassword: '',
 })
 const isLoading = ref(false)
 const toast = useToast()
 const router = useRouter()
+const globalStore = useGlobalStore()
 
-const forgetPassword = async () => {
+const updatePassword = async () => {
   isLoading.value = true
-  const { status } = await useforgetPassword(forgetPasswordForm.value)
+  const payload = {
+    resetToken: globalStore.resetToken,
+    newPassword: updatePasswordForm.value.newPassword,
+  }
+  const { status, error } = await useUpdatePassword(payload)
   if (status.value == 'success') {
-    toast.add({ description: 'OTP sent successfully', color: 'success', class: 'text-black' })
-    const globalStore = useGlobalStore()
-    globalStore.email = forgetPasswordForm.value.email
+    toast.add({
+      description: 'Password updated successfully.',
+      color: 'success',
+      class: 'text-black',
+    })
+    await router.push('/')
+  } else {
+    toast.add({
+      description: error.value?.data?.message || 'Error updating password',
+      color: 'error',
+      class: 'text-black',
+    })
+  }
 
-    await router.push('/auth/otp/verifyOTP')
-  }
-  else {
-    toast.add({ description: 'No account found with this email', color: 'error', class: 'text-white' })
-  }
-    isLoading.value = false
+  isLoading.value = false
 }
 </script>
 
@@ -33,27 +42,27 @@ const forgetPassword = async () => {
       <div class="w-full max-w-md px-6 space-y-6">
         <div class="text-center">
           <p class="text-lg md:text-3xl font-bold text-black mt-16">
-            Forget Password
+            Update Password
           </p>
           <p class="text-[#868686] pt-3">
-            Enter our Email to Send OTP
+            Enter your New Password
           </p>
         </div>
         <UForm
           ref="form"
-          :state="forgetPasswordForm"
           action="#"
-          :schema="forgetPasswordSchema"
+          :schema="updatePasswordSchema"
           class="space-y-4"
-          @submit="forgetPassword"
+          :state="updatePasswordForm"
+          @submit="updatePassword"
         >
           <UFormField
             class="text-primary"
-            label="Email"
-            name="email"
+            label="New Password"
+            name="newPassword"
           >
             <UInput
-              v-model="forgetPasswordForm.email"
+              v-model="updatePasswordForm.newPassword"
               class="border-0 rounded-lg bg-white text-black block"
               size="xl"
               variant="subtle"
