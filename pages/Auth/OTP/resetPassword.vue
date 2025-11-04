@@ -26,7 +26,7 @@ const updatePassword = async () => {
     await router.push('/')
   } else {
     toast.add({
-      description: error.value?.data?.message || 'Error updating password',
+      description: error.value?.data?.message,
       color: 'error',
       class: 'text-black',
     })
