@@ -87,7 +87,7 @@ const loginUser = async () => {
               <p
                 v-if="useRoute().fullPath !='/auth/admin' || useRoute().fullPath =='/Auth/admin'"
                 class="text-end text-Sequand underline cursor-pointer font-bold"
-                @click="navigateTo('/auth/forgetPassword')"
+                @click="navigateTo('/auth/OTP')"
               >
                 Forget Password
               </p>
