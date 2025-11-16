@@ -84,7 +84,7 @@ const loginUser = async () => {
                 />
               </UFormField>
               <p
-                v-if="useRoute().fullPath !='/auth/admin' || useRoute().fullPath =='/Auth/admin'"
+                v-if="!['/auth/student/register', '/auth/admin'].includes(useRoute().fullPath.toLowerCase())"
                 class="text-end text-Sequand underline cursor-pointer font-bold"
                 @click="navigateTo('/auth/OTP')"
               >
