@@ -5,6 +5,7 @@ import { useLogout } from '@@/queries/Auth/admin'
 const store = useGlobalStore()
 const name = ref(store.name)
 const email = ref(store.email)
+const router = useRouter()
 
 defineProps<{ toggleSidebar: () => void }>()
 const showLogoutConfirm = ref(false)
@@ -15,6 +16,7 @@ const { execute, status } = useLogout()
   if (status.value === 'success') {
     store.logout()
     showLogoutConfirm.value = false
+    router.push('./auth/admin')
   }
 }
 
@@ -27,12 +29,8 @@ const adminMenuItems = [
 <template>
   <header class="flex justify-between items-center border-0 px-6 py-4 bg-primary shadow-sm">
     <div class="flex items-center gap-3">
-      <img
-        src="/logo.jpg"
-        class="w-12 h-12 rounded-4xl"
-      >
-      <p class="text-xl font-semibold">
-        Trip Station
+      <p class="text-2xl font-semibold pl-5">
+        Skill Track
       </p>
     </div>
     <button
@@ -55,7 +53,9 @@ const adminMenuItems = [
       </svg>
     </button>
     <div class="flex items-center gap-4">
-      <p>{{ name }}</p>
+      <p class="hidden sm:flex">
+        {{ name }}
+      </p>
       <UButton
         variant="ghost"
         class="p-0"

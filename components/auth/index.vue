@@ -32,7 +32,6 @@ const loginUser = async () => {
   const result = await props.loginFunction(userForm.value)
   if (result && result.success) {
     const globalStore = useGlobalStore()
-    console.log(result)
     globalStore.role = result.role
     globalStore.name = result.name
     globalStore.email = result.email
