@@ -39,7 +39,7 @@ const companyLoginFunction = async (userData: loginModel) => {
           You Do Not Have Account?
           <span
             class="text-Sequand underline mx-1 cursor-pointer font-bold"
-            @click="navigateTo('/Auth/Company/Register')"
+            @click="navigateTo('/Auth/Company/register')"
           >Sign Up</span>
         </p>
       </template>

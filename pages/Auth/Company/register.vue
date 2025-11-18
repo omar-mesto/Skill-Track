@@ -47,7 +47,7 @@ const registerUser = async () => {
   formData.append('name', companyFrom.value.name)
   formData.append('email', companyFrom.value.email)
   formData.append('password', companyFrom.value.password)
-  formData.append('bio', companyFrom.value.companyName)
+  formData.append('bio', companyFrom.value.bio)
   formData.append('companyName', companyFrom.value.companyName)
   if (companyFrom.value.avatar) formData.append('avatar', companyFrom.value.avatar)
   if (companyFrom.value.coverImage) formData.append('coverImage', companyFrom.value.coverImage)
@@ -86,7 +86,7 @@ const registerUser = async () => {
   <div class="w-full bg-white text-black h-screen flex flex-col md:flex-row">
     <div class="w-1/2 bg-primary md:grid hidden h-screen place-items-center">
       <img
-        src="/CompanyLogin.png"
+        src="/ProfessorLogin.png"
         class="w-full md:w-xl"
       >
     </div>
@@ -212,7 +212,7 @@ const registerUser = async () => {
                 Already have account?
                 <span
                   class="text-Sequand underline cursor-pointer font-bold"
-                  @click="navigateTo('/Auth/Student')"
+                  @click="navigateTo('/Auth/Company')"
                 >
                   Sign in
                 </span>
