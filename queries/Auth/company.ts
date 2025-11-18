@@ -5,8 +5,14 @@ export const useLoginCompany = (user: loginModel) => {
   return useAPI({ url: '/auth/company/login', payload: user, queryKey: 'company', type: 'POST' })
 }
 
-export const useRegisterProfessor = (user: loginModel) => {
-  return useAPI({ url: '/auth/company/register', payload: user, queryKey: 'company', type: 'POST' })
+export const useRegisterCompany = (formData: FormData) => {
+  return useAPI({
+    url: '/auth/company/register',
+    payload: formData,
+    queryKey: 'company-register',
+    type: 'POST',
+    isLazy: true,
+  })
 }
 
 export const useLogout = () => {
