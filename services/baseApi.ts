@@ -18,6 +18,7 @@ export function useAPI<T>(
         params: { ...options.params },
         method: options.type,
         watch: false,
+        transform: (response) => response as T,
         onResponse: async () => await refreshNuxtData(options.queryKey),
     })
 }

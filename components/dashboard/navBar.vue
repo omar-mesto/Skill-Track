@@ -16,7 +16,7 @@ const { execute, status } = useLogout()
   if (status.value === 'success') {
     store.logout()
     showLogoutConfirm.value = false
-    router.push('./auth/admin')
+    router.push('./')
   }
 }
 

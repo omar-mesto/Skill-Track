@@ -37,7 +37,7 @@ const allCompanies = computed<CompanyRow[]>(() => {
 })
 
 const page = ref(1)
-const limit = 10
+const limit = 12
 
 const pagination = computed(() => ({
   total: allCompanies.value.length,

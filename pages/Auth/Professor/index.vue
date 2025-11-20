@@ -9,7 +9,7 @@ const professorLoginFunction = async (userData: loginModel) => {
   const { data, status } = await useLoginProfessor(userData)
   if (status.value === 'success') {
     const loginData = data.value as LoginResponse
-    router.push('/')
+    router.push('../../Profile/professor')
 
     return { success: true, role: loginData.data.user.role, token: loginData.data.token, name: loginData.data.user.name, email: loginData.data.user.email }
   } else {
