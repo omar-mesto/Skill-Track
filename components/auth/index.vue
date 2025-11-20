@@ -36,9 +36,9 @@ const loginUser = async () => {
     globalStore.name = result.name
     globalStore.email = result.email
     globalStore.token = result.token
-    toast.add({ description: `Login Successful`, color: 'success', class: 'text-white' })
+    toast.add({ description: `Login Successful`, color: 'success', class: 'text-black bg-white' })
   } else {
-    toast.add({ description: `${errorStore.message}`, color: 'error', class: 'text-white' })
+    toast.add({ description: `${errorStore.message}`, color: 'error', class: 'text-black bg-white' })
   }
   isLoading.value = false
   userForm.value.email = ''
