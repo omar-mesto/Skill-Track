@@ -118,6 +118,7 @@ export interface ProfessorProfileUser {
 export interface ProfessorProfileData {
   user: ProfessorProfileUser
   bio: string
+  specialization: string
 }
 
 export interface ProfessorProfileResponse {
