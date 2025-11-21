@@ -19,6 +19,7 @@ const form = ref({
   name: '',
   bio: '',
   email: '',
+  specialization: '',
 })
 
 const newAvatar = ref<File | null>(null)
@@ -54,16 +55,22 @@ const update = async () => {
   const fd = new FormData()
   fd.append('name', form.value.name)
   fd.append('bio', form.value.bio)
+  fd.append('specialization', form.value.specialization)
 
   if (newAvatar.value) fd.append('avatar', newAvatar.value)
   if (newCover.value) fd.append('coverImage', newCover.value)
 
   isSaving.value = true
-  const { status, execute } = await useUpdateProfessorProfile(fd)
+
+  const { status, execute } = useUpdateProfessorProfile(fd)
   await execute()
 
   if (status.value === 'success') {
-    toast.add({ description: 'Professor Profile Updated', color: 'success' })
+    toast.add({ description: 'Professor Profile Updated', color: 'success', class: 'text-black bg-white' })
+
+    emit('updated')
+    emit('update:modelValue', false)
+
     emit('updated')
     emit('update:modelValue', false)
   }
@@ -97,6 +104,15 @@ const update = async () => {
         <UFormField label="Name">
           <UInput
             v-model="form.name"
+            class="rounded-lg bg-white text-black block"
+            size="xl"
+            variant="subtle"
+          />
+        </UFormField>
+
+        <UFormField label="Specialization">
+          <UInput
+            v-model="form.specialization"
             class="rounded-lg bg-white text-black block"
             size="xl"
             variant="subtle"
