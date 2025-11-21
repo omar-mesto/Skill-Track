@@ -1,11 +1,11 @@
 import { ref, watch } from 'vue'
-import type { professorProfileResponse } from '@@/models/profileInformationModel'
+import type { ProfessorProfileResponse } from '@@/models/profileInformationModel'
 import { useGetProfessorProfileInformation } from '@@/queries/Profile/professor/information'
 
-export function useCompanyProfile() {
+export function useProfessorProfile() {
   const { data, refresh } = useGetProfessorProfileInformation()
 
-  const profile = ref<professorProfileResponse['data'] | null>(null)
+  const profile = ref<ProfessorProfileResponse['data'] | null>(null)
 
  watch(
   data,
