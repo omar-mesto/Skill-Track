@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import EditProfileModal from '@@/components/Profile/updateProfileInformation.vue'
 import { useLogout } from '@@/queries/Auth/admin'
 import { useGetCompanyProfileInformation } from '@@/queries/Profile/company/information'
 import UpdateCompanyProfileInformation from './updateCompanyProfileInformation.vue'
