@@ -5,6 +5,8 @@ import Posts from '@/components/Profile/tabs/Posts.vue'
 import Tasks from '@/components/Profile/tabs/Tasks.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 
+const { profile } = useCompanyProfile()
+
 const tabs = [
   { name: 'Posts', component: Posts },
   { name: 'Tasks', component: Tasks },
@@ -29,23 +31,13 @@ const activeTab = ref(tabs[0])
     >
       {{ tab.name }}
     </button>
+    <h1 class="text-red-500">
+      {{ profile?.user?._id }}
+    </h1>
   </div>
 
-  <div
-    name="fade"
-    mode="out-in"
-  >
-    <component :is="activeTab.component" />
-  </div>
+  <component
+    :is="activeTab.component"
+    :user-id="profile?.user?._id"
+  />
 </template>
-
-<style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
