@@ -33,15 +33,15 @@ const confirmLogout = async () => {
           {{ profile?.user.name }}
         </h2>
 
-        <p class="text-lg text-secondary">
-          {{ profile?.bio || 'No Company Name' }}
-        </p>
-
         <p class="text-gray-700">
           {{ profile?.user.email }}
         </p>
 
-        <p class="text-gray-600 mt-2">
+        <p class="text-gray-700">
+          {{ profile?.specialization }}
+        </p>
+
+        <p class="text-lg text-secondary">
           {{ profile?.bio || 'No bio available' }}
         </p>
       </div>

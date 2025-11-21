@@ -3,23 +3,27 @@ import { computed } from 'vue'
 
 const API_BASE_URL = 'http://localhost:5000/'
 
-const { profile } = useCompanyProfile()
+const { profile } = useProfessorProfile()
 
 const normalize = (path?: string | null) =>
   path ? path.replace(/\\/g, '/') : null
-
-const coverUrl = computed(() => {
-  const p = profile.value?.user?.coverImage
-  const n = normalize(p)
-
-  return n ? `${API_BASE_URL}${n}` : '/coverImage.jpg'
-})
 
 const avatarUrl = computed(() => {
   const p = profile.value?.user?.avatar
   const n = normalize(p)
 
-  return n ? `${API_BASE_URL}${n}` : '/StudentLogin.png'
+  return n
+    ? `${API_BASE_URL}${n}?v=${Date.now()}`
+    : '/StudentLogin.png'
+})
+
+const coverUrl = computed(() => {
+  const p = profile.value?.user?.coverImage
+  const n = normalize(p)
+
+  return n
+    ? `${API_BASE_URL}${n}?v=${Date.now()}`
+    : '/coverImage.jpg'
 })
 </script>
 

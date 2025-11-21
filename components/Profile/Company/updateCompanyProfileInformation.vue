@@ -62,7 +62,7 @@ const update = async () => {
   await execute()
 
   if (status.value === 'success') {
-    toast.add({ description: 'Company Profile Updated', color: 'success' })
+    toast.add({ description: 'Company Profile Updated', color: 'success', class: 'text-black bg-white' })
     emit('updated')
     emit('update:modelValue', false)
   }
