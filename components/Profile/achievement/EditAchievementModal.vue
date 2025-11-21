@@ -54,7 +54,7 @@ const update = async () => {
   const { status } = await useUpdateAchievement(props.modelValue._id, fd)
 
   if (status.value === 'success') {
-    toast.add({ description: 'Achievement Updated', color: 'success' })
+    toast.add({ description: 'Achievement Updated', color: 'success', class: 'text-black bg-white' })
     emit('updated')
     emit('update:modelValue', null)
   }
