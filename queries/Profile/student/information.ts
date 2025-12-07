@@ -3,7 +3,7 @@ import type { ProfileResponse, UpdateProfileDto } from '@@/models/profileInforma
 
 export const useGetProfileInformation = () => {
   return useAPI<ProfileResponse>({
-    url: '/profile',
+    url: '/profile/professor/get',
     type: 'GET',
     queryKey: 'profile-information',
   })

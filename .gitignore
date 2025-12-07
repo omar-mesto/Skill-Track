@@ -1,24 +1,50 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
+# Nuxt build output
+.nuxt/
+dist/
+.output/
+.cache/
+build/
+.data/
+.nitro/
 
 # Node dependencies
-node_modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
+# Env files
 .env
 .env.*
 !.env.example
+
+# IDEs & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.fleet/
+
+# Capacitor & Android
+android/.gradle/
+android/.idea/
+android/local.properties
+android/captures/
+android/app/build/
+android/build/
+android/.externalNativeBuild/
+
+# Gradle cache and wrappers (keep only gradlew, gradlew.bat, gradle/wrapper)
+**/gradle-cache/
+**/.gradletasknamecache
+
+# iOS (if added later)
+ios/
+Pods/
+*.xcworkspace
+*.xcuserdata
+*.xcuserdatad
+
+# Logs
+logs/
+*.log

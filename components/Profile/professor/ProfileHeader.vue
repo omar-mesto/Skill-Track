@@ -12,18 +12,14 @@ const avatarUrl = computed(() => {
   const p = profile.value?.user?.avatar
   const n = normalize(p)
 
-  return n
-    ? `${API_BASE_URL}${n}?v=${Date.now()}`
-    : '/StudentLogin.png'
+  return n ? `${API_BASE_URL}${n}` : '/coverImage.jpg'
 })
 
 const coverUrl = computed(() => {
   const p = profile.value?.user?.coverImage
   const n = normalize(p)
 
-  return n
-    ? `${API_BASE_URL}${n}?v=${Date.now()}`
-    : '/coverImage.jpg'
+  return n ? `${API_BASE_URL}${n}` : '/StudentLogin.png'
 })
 </script>
 

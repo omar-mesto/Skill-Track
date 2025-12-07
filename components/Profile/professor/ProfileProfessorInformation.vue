@@ -10,8 +10,7 @@ const showLogoutConfirm = ref(false)
 const showEdit = ref(false)
 const router = useRouter()
 
-const { data, refresh } = useGetProfessorProfileInformation()
-const profile = computed(() => data.value?.data || null)
+const { profile, refresh } = useProfessorProfile()
 
 const { execute: logoutExecute, status: logoutStatus } = useLogout()
 

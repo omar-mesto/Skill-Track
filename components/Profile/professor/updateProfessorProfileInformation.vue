@@ -68,8 +68,8 @@ const update = async () => {
   if (status.value === 'success') {
     toast.add({ description: 'Professor Profile Updated', color: 'success', class: 'text-black bg-white' })
 
-    emit('updated')
-    emit('update:modelValue', false)
+    const { refresh } = useProfessorProfile()
+    await refresh()
 
     emit('updated')
     emit('update:modelValue', false)
