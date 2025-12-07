@@ -12,6 +12,9 @@
         "lint:fix": "eslint . --fix"
     },
     "dependencies": {
+        "@capacitor/android": "^7.4.4",
+        "@capacitor/cli": "^7.4.4",
+        "@capacitor/core": "^7.4.4",
         "@nuxt/ui-pro": "^3.0.0",
         "@pinia/nuxt": "^0.10.1",
         "nuxt": "^3.16.0",
