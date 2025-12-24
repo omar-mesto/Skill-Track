@@ -146,7 +146,6 @@ const update = async () => {
         <UFormField label="Full Name">
           <UInput
             v-model="form.fullName"
-            disabled
             class="rounded-lg bg-white text-black block"
             size="xl"
             variant="subtle"

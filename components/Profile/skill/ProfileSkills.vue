@@ -8,23 +8,33 @@ import type { SkillModel } from '~/models/skillModel'
 const { data, refresh } = useGetMySkills()
 
 const openAdd = ref(false)
-
 const editData = ref<SkillModel | null>(null)
 
 const skills = computed(() => {
   if (!data.value) return []
 
   return data.value.data.map(skill => {
-    // if he have Project => 40%
-    // if he have Achievements => 40%
-    // if he have Certificates => 20%
+    const projectCount = skill.linkedProjects.length
+    const achievementCount = skill.linkedAchievements.length
+    const certificateCount = skill.linkedCertificates.length
 
-    const p = skill.linkedProjects.length
-    const a = skill.linkedAchievements.length
-    const c = skill.linkedCertificates.length
+    let projectScore = 0
+    if (projectCount >= 4) projectScore = 40
+    else if (projectCount === 3) projectScore = 30
+    else if (projectCount === 2) projectScore = 20
+    else if (projectCount === 1) projectScore = 10
 
-    let progress = (p * 40) + (a * 40) + (c * 20)
-    if (progress > 100) progress = 100
+    let achievementScore = 0
+    if (achievementCount >= 5) achievementScore = 40
+    else if (achievementCount === 3 || achievementCount === 4) achievementScore = 30
+    else if (achievementCount === 2) achievementScore = 20
+    else if (achievementCount === 1) achievementScore = 10
+
+    let certificateScore = 0
+    if (certificateCount >= 2) certificateScore = 20
+    else if (certificateCount === 1) certificateScore = 10
+
+    const progress = Math.min(projectScore + achievementScore + certificateScore, 100)
 
     return { ...skill, progress }
   })
