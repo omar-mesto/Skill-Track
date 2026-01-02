@@ -33,6 +33,7 @@ const loginUser = async () => {
   if (result && result.success) {
     const globalStore = useGlobalStore()
     globalStore.role = result.role
+    globalStore.id = result.id
     globalStore.name = result.name
     globalStore.email = result.email
     globalStore.token = result.token
