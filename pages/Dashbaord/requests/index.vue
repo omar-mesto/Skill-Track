@@ -17,7 +17,14 @@ const selectedItem = ref<Company | null>(null)
 const modalActionType = ref<'approve' | 'reject' | null>(null)
 const API_BASE_URL = 'http://127.0.0.1:5000/'
 
+const imageModalOpen = ref(false)
+const selectedImage = ref<string | null>(null)
 const toast = useToast()
+
+function openImageModal(imagePath: string) {
+  selectedImage.value = `${API_BASE_URL}${imagePath.replace(/\\/g, '/')}`
+  imageModalOpen.value = true
+}
 
 const { data, pending, execute, refresh } = useGetApprovals('company')
 
@@ -81,6 +88,21 @@ const columns: TableColumn<CompanyRow>[] = [
   },
   { accessorKey: 'email', header: 'Email' },
   { accessorKey: 'bio', header: 'Bio' },
+  {
+  header: 'License',
+  cell: ({ row }) => {
+    const license = row.original.licenseImage
+    if (!license) return '—'
+
+    const imgUrl = `${API_BASE_URL}${license.replace(/\\/g, '/')}`
+
+    return h('img', {
+      src: imgUrl,
+      class: 'w-12 h-12 object-cover rounded-full cursor-pointer border',
+      onClick: () => openImageModal(license),
+    })
+  },
+  },
   {
     id: 'actions',
     header: 'Actions',
@@ -259,6 +281,29 @@ const toggleSidebar = () => (isSidebarOpen.value = !isSidebarOpen.value)
           >
             Confirm
           </UButton>
+        </div>
+      </template>
+    </UModal>
+    <UModal
+      v-model:open="imageModalOpen"
+      class="bg-white"
+      :close="{
+        color: 'primary',
+        variant: 'outline',
+        class: 'rounded-full',
+      }"
+    >
+      <template #title>
+        <p class="text-black">
+          License Image
+        </p>
+      </template>
+      <template #body>
+        <div class="flex justify-center">
+          <img
+            :src="selectedImage!"
+            class="max-h-[80vh] max-w-full rounded w-full shadow-lg"
+          >
         </div>
       </template>
     </UModal>

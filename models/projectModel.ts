@@ -9,6 +9,7 @@ export interface ProjectModel {
   warning?: string | null
   createdAt: string
   updatedAt: string
+  skillsIds?: string[]
 }
 
 export interface ProjectResponse {

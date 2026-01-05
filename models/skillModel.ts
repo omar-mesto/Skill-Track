@@ -17,7 +17,7 @@ export interface GetMySkillsResponse {
   data: SkillModel[]
 }
 
-export interface CreateSkillDto {
+export interface CreateSkillForm {
   name: string
   description: string
   level: 'beginner' | 'intermediate' | 'advanced'

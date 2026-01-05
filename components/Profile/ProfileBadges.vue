@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useGetBadges } from '@@/queries/Profile/student/badges'
+import type { BadgeModel } from '~/models/badgesModel'
 
-const { data } = useGetBadges()
-
-const badges = computed(() => data.value?.data ?? [])
+const props = defineProps<{
+  badges: BadgeModel[]
+  isOwner: boolean
+  loading?: boolean
+}>()
 </script>
 
 <template>
@@ -11,8 +13,24 @@ const badges = computed(() => data.value?.data ?? [])
     <h3 class="font-bold text-black text-lg sm:text-xl mb-4">
       Badges
     </h3>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div
+      v-if="props.loading"
+      class="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="p-4 bg-gray-100 rounded-xl border animate-pulse"
+      >
+        <div class="h-4 w-1/3 bg-gray-300 rounded mb-3" />
+        <div class="h-3 w-2/3 bg-gray-300 rounded mb-2" />
+        <div class="h-2 w-full bg-gray-300 rounded" />
+      </div>
+    </div>
+    <div
+      v-else
+      class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+    >
       <div
         v-for="(b, i) in badges"
         :key="i"

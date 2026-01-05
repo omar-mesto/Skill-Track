@@ -2,7 +2,6 @@
 import { h } from 'vue'
 import type { Row } from '@tanstack/vue-table'
 import type { TableColumn } from '@nuxt/ui'
-
 import { useGetApprovals, useApproveRequest, useRejectRequest } from '@@/queries/Dashbaord/requests'
 import type { ProfessorApprovalsData, SingleApprovalResponse } from '@@/models/professorModel'
 import type { Professor } from '@@/models/approvalModel'
@@ -15,7 +14,14 @@ const modalTitle = ref('')
 const pedingAction = ref(true)
 const selectedItem = ref<Professor | null>(null)
 const modalActionType = ref<'approve' | 'reject' | null>(null)
+const imageModalOpen = ref(false)
+const selectedImage = ref<string | null>(null)
+const API_BASE_URL = 'http://127.0.0.1:5000/'
 
+function openImageModal(imagePath: string) {
+  selectedImage.value = `${API_BASE_URL}${imagePath.replace(/\\/g, '/')}`
+  imageModalOpen.value = true
+}
 const toast = useToast()
 
 const { data, pending, execute, refresh } = useGetApprovals('professor')
@@ -82,6 +88,21 @@ const columns: TableColumn<ProfessorRow>[] = [
   { accessorKey: 'email', header: 'Email' },
   { accessorKey: 'specialization', header: 'Specialization' },
   { accessorKey: 'bio', header: 'Bio' },
+  {
+  header: 'Certificate',
+  cell: ({ row }) => {
+    const cert = row.original.certificate
+    if (!cert) return '—'
+
+    const imgUrl = `${API_BASE_URL}${cert.replace(/\\/g, '/')}`
+
+    return h('img', {
+      src: imgUrl,
+      class: 'w-12 h-12 object-cover rounded-full cursor-pointer border',
+      onClick: () => openImageModal(cert),
+    })
+  },
+},
   {
   id: 'actions',
   header: 'Actions',
@@ -259,6 +280,33 @@ const toggleSidebar = () => (isSidebarOpen.value = !isSidebarOpen.value)
             Confirm
           </UButton>
         </div>
+      </template>
+    </UModal>
+    <UModal
+      v-model:open="imageModalOpen"
+      class="bg-white"
+      :close="{
+        color: 'primary',
+        variant: 'outline',
+        class: 'rounded-full',
+      }"
+    >
+      <template #body>
+        <div class="flex justify-center">
+          <img
+            :src="selectedImage!"
+            class="max-h-[80vh] max-w-full rounded shadow-lg"
+          >
+        </div>
+      </template>
+
+      <template #footer>
+        <UButton
+          variant="ghost"
+          @click="imageModalOpen = false"
+        >
+          Close
+        </UButton>
       </template>
     </UModal>
   </div>

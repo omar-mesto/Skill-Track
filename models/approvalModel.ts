@@ -4,6 +4,7 @@ export interface Company {
   email: string
   bio?: string
   avatar?: string
+  licenseImage?: string
   approvalStatus: 'pending' | 'approved' | 'rejected'
 }
 
@@ -13,6 +14,7 @@ export interface Professor {
   email: string
   specialization?: string
   bio?: string
+  certificate?: string
   avatar?: string
   approvalStatus: 'pending' | 'approved' | 'rejected'
 }

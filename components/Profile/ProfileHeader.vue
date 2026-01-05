@@ -1,35 +1,42 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useProfile } from '@@/composables/useProfile'
+import type { ProfileResponse } from '@@/models/profileInformationModel'
 
 const API_BASE_URL = 'http://localhost:5000/'
 
-const { profile } = useProfile()
+const props = defineProps<{
+  profile: ProfileResponse['data'] | null
+  imageVersion: number
+}>()
 
 const normalize = (path?: string | null) =>
   path ? path.replace(/\\/g, '/') : null
 
 const coverUrl = computed(() => {
-  const p = profile.value?.user?.coverImage
+  const p = props.profile?.user?.coverImage
   const n = normalize(p)
 
-  return n ? `${API_BASE_URL}${n}` : '/coverImage.jpg'
+  return n
+    ? `${API_BASE_URL}${n}?v=${props.imageVersion}`
+    : '/coverImage.jpg'
 })
 
 const avatarUrl = computed(() => {
-  const p = profile.value?.user?.avatar
+  const p = props.profile?.user?.avatar
   const n = normalize(p)
 
-  return n ? `${API_BASE_URL}${n}` : '/StudentLogin.png'
+  return n
+    ? `${API_BASE_URL}${n}?v=${props.imageVersion}`
+    : '/StudentLogin.png'
 })
 </script>
 
 <template>
   <div class="relative w-full">
-    <div class="w-full h-40 sm:h-48 md:h-60 lg:h-72 overflow-hidden">
+    <div class="w-full h-40 sm:h-48 md:h-60 lg:h-60 overflow-hidden">
       <img
         :src="coverUrl"
-        class="w-full h-full object-cover"
+        class="w-full h-full object-fill"
       >
     </div>
 

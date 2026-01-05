@@ -116,18 +116,6 @@ const update = async () => {
             />
           </UFormField>
 
-          <!-- <UFormField
-            label="Certificate"
-            class="mt-5"
-          >
-            <input
-              type="file"
-              accept="image/*"
-              class="block border p-2 rounded-lg w-full"
-              @change="onFileChange"
-            >
-          </UFormField> -->
-
           <UButton
             block
             type="submit"

@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLogout } from '@@/queries/Auth/admin'
-import { useGetProfessorProfileInformation } from '@@/queries/Profile/professor/information'
 import UpdateProfessorProfileInformation from './updateProfessorProfileInformation.vue'
 
 const store = useGlobalStore()
@@ -22,15 +21,56 @@ const confirmLogout = async () => {
     router.push('/')
   }
 }
+const emit = defineEmits(['openSidebar'])
 </script>
 
 <template>
   <div class="sm:mt-16 mt-10 px-4 sm:px-6 md:px-8">
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
       <div class="space-y-2">
-        <h2 class="text-3xl font-bold text-gray-900">
-          {{ profile?.user.name }}
-        </h2>
+        <div class="flex w-full justify-between">
+          <h2 class="text-3xl font-bold text-gray-900">
+            {{ profile?.user.name }}
+          </h2>
+          <div class="flex gap-x-5">
+            <button
+              class="md:hidden flex items-center gap-2 text-gray-800"
+              @click="emit('openSidebar')"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line
+                  x1="4"
+                  y1="6"
+                  x2="20"
+                  y2="6"
+                />
+                <line
+                  x1="4"
+                  y1="12"
+                  x2="20"
+                  y2="12"
+                />
+                <line
+                  x1="4"
+                  y1="18"
+                  x2="20"
+                  y2="18"
+                />
+              </svg>
+              <span class="font-medium">Menu</span>
+            </button>
+          </div>
+        </div>
 
         <p class="text-gray-700">
           {{ profile?.user.email }}

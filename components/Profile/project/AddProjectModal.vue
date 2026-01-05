@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useCreateProject } from '@@/queries/Profile/student/project'
-import { useGetMySkills, useLinkSkill } from '@@/queries/Profile/student/skill'
+import { useLinkSkill } from '@@/queries/Profile/student/skill'
 import { createProject } from '@@/schema/createProject'
 import type { CreateProjectDto } from '@@/models/projectModel'
 import { useErrorStore } from '@@/stores/error'
+import type { SkillModel } from '~/models/skillModel'
 
-const props = defineProps({
-  modelValue: Boolean,
-})
 const warningStore = useProjectWarningStore()
 
 const emit = defineEmits(['update:modelValue', 'created'])
@@ -39,8 +37,12 @@ const removeTech = (i: number) => {
   form.value.technologies.splice(i, 1)
 }
 
-const { data: skillsData } = useGetMySkills()
-const skills = computed(() => skillsData.value?.data ?? [])
+const props = defineProps<{
+  modelValue: boolean
+  skills: SkillModel[]
+}>()
+
+const skills = computed(() => props.skills)
 
 const isLoading = ref(false)
 const toast = useToast()
@@ -48,21 +50,21 @@ const errorStore = useErrorStore()
 
 const submit = async () => {
   isLoading.value = true
-
   const { data, status } = await useCreateProject(form.value)
-
   if (status.value === 'success' && data.value) {
     const project = data.value.data
-    const projectId = project._id
-
-    for (const skillId of form.value.skillsIds) {
-      await useLinkSkill(skillId, projectId, 'project')
+    if (form.value.skillsIds.length > 0) {
+      await useLinkSkill(
+        form.value.skillsIds[0],
+        project._id,
+        'project',
+        form.value.skillsIds,
+      )
     }
 
-    if (data.value.message.includes('Warning')) {
+    if (data.value.message?.includes('Warning')) {
       warningStore.setWarning(project._id, data.value.message)
     }
-
     emit('created', project)
     localOpen.value = false
     toast.add({ description: 'Project Created', color: 'success', class: 'text-black bg-white' })

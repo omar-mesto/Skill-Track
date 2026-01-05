@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const createProject = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'Title is required').max(20),
   description: z.string().min(1, 'Description is required'),
   github: z.string()
     .url('GitHub URL must be valid')

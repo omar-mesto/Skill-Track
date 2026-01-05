@@ -2,26 +2,25 @@ import { refreshNuxtData, useFetch } from 'nuxt/app'
 import type { Ref } from 'vue'
 import { useGlobalStore } from '@@/stores/global'
 
-export function useAPI<T>(
-    options: {
-        url: MaybeRefOrGetter<string>,
-        payload?: object | FormData,
-        queryKey: string,
-        isLazy?: boolean
-        params?: { skip: Ref<number>, limit: Ref<number> }
-        type: ('DELETE' | 'GET' | 'POST' | 'PUT')
-    },
-) {
-    return useFetch(options.url, {
-        $fetch: api,
-        body: options.payload,
-        params: { ...options.params },
-        method: options.type,
-        watch: false,
-        transform: (response) => response as T,
-        onResponse: async () => await refreshNuxtData(options.queryKey),
-    })
+export function useAPI<T>(options: {
+  url: MaybeRefOrGetter<string>
+  payload?: object | FormData
+  queryKey: string
+  isLazy?: boolean
+  params?: { skip: Ref<number>, limit: Ref<number> }
+  type: 'DELETE' | 'GET' | 'POST' | 'PUT'
+}) {
+  return useFetch(options.url, {
+    key: options.queryKey,
+    $fetch: api,
+    body: options.payload,
+    params: { ...options.params },
+    method: options.type,
+    watch: false,
+    transform: response => response as T,
+  })
 }
+
 export const api = $fetch.create({
     baseURL: 'http://localhost:5000/api',
     onRequest({ options }) {

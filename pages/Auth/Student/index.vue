@@ -11,7 +11,7 @@ const studentLoginFunction = async (userData: loginModel) => {
     const loginData = data.value as LoginResponse
     router.push('../../Profile/Student')
 
-    return { success: true, role: loginData.data.user.role, token: loginData.data.token, name: loginData.data.user.name, email: loginData.data.user.email }
+    return { success: true, role: loginData.data.user.role, id: loginData.data.user.id, token: loginData.data.token, name: loginData.data.user.name, email: loginData.data.user.email }
   } else {
     return { success: false }
   }

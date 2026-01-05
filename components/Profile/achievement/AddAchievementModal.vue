@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCreateAchievement } from '@@/queries/Profile/student/achievement'
-import { useGetMySkills, useLinkSkill } from '@@/queries/Profile/student/skill'
+import { useLinkSkill } from '@@/queries/Profile/student/skill'
+import { createAchievement } from '@@/schema/createAchievement'
+import type { SkillModel } from '~/models/skillModel'
 
-const props = defineProps({ modelValue: Boolean })
 const emit = defineEmits(['update:modelValue', 'created'])
 
 const localOpen = computed({
@@ -19,14 +20,12 @@ const form = ref({
 })
 const certificate = ref<File | null>(null)
 
-// const onFileChange = (e: Event) => {
-//   const target = e.target as HTMLInputElement
-//   if (!target.files) return
-//   certificate.value = target.files[0]
-// }
+const props = defineProps<{
+  modelValue: boolean
+  skills: SkillModel[]
+}>()
 
-const { data: skillsData } = useGetMySkills()
-const skills = computed(() => skillsData.value?.data ?? [])
+const skills = computed(() => props.skills)
 
 const isLoading = ref(false)
 const toast = useToast()
@@ -37,19 +36,20 @@ const submit = async () => {
   fd.append('title', form.value.title)
   fd.append('description', form.value.description)
   fd.append('date', form.value.date)
-
   if (certificate.value) fd.append('certificate', certificate.value)
-
   isLoading.value = true
-
   const { status, data } = await useCreateAchievement(fd)
+  if (status.value === 'success' && data.value) {
+    const achievement = data.value.data
+    if (form.value.skillsIds.length > 0) {
+      await useLinkSkill(
+        form.value.skillsIds[0],
+        achievement._id,
+        'project',
+        form.value.skillsIds,
+      )
+    }
 
-  if (status.value === 'success') {
-    const achievement = data.value!.data
-    const achievementId = achievement._id
-      for (const skillId of form.value.skillsIds) {
-        await useLinkSkill(skillId, achievementId, 'achievement')
-      }
     emit('created', achievement)
     localOpen.value = false
     toast.add({ description: 'Achievement Created', color: 'success', class: 'text-black bg-white' })
@@ -87,10 +87,14 @@ const submit = async () => {
       <div class="p-4">
         <UForm
           :state="form"
+          :schema="createAchievement"
           class="space-y-3 text-black"
           @submit="submit"
         >
-          <UFormField label="Title">
+          <UFormField
+            label="Title"
+            name="title"
+          >
             <UInput
               v-model="form.title"
               class=" rounded-lg bg-white text-black block"
@@ -117,15 +121,6 @@ const submit = async () => {
               variant="subtle"
             />
           </UFormField>
-
-          <!-- <UFormField label="Certificate">
-            <input
-              type="file"
-              accept="image/*"
-              class="block border p-2 rounded-lg w-full"
-              @change="onFileChange"
-            >
-          </UFormField> -->
 
           <div class="flex flex-col gap-2">
             <label

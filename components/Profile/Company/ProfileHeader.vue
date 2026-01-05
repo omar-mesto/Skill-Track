@@ -1,33 +1,35 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
-const API_BASE_URL = 'http://localhost:5000/'
+import { computed, ref } from 'vue'
 
 const { profile } = useCompanyProfile()
 
-const normalize = (path?: string | null) =>
-  path ? path.replace(/\\/g, '/') : null
+const cacheBuster = ref(Date.now())
 
-const coverUrl = computed(() => {
-  const p = profile.value?.user?.coverImage
-  const n = normalize(p)
+const avatarSrc = computed(() => {
+  const url = profile.value?.user?.avatar
 
-  return n ? `${API_BASE_URL}${n}` : '/coverImage.jpg'
+  return url ? `${url}?v=${cacheBuster.value}` : ''
 })
 
-const avatarUrl = computed(() => {
-  const p = profile.value?.user?.avatar
-  const n = normalize(p)
+const coverSrc = computed(() => {
+  const url = profile.value?.user?.coverImage
 
-  return n ? `${API_BASE_URL}${n}` : '/StudentLogin.png'
+  return url ? `${url}?v=${cacheBuster.value}` : ''
 })
+
+const refreshImages = () => {
+  cacheBuster.value = Date.now()
+}
+
+defineExpose({ refreshImages })
 </script>
 
 <template>
   <div class="relative w-full">
     <div class="w-full h-40 sm:h-48 md:h-60 lg:h-72 overflow-hidden">
       <img
-        :src="coverUrl"
+        :key="coverSrc"
+        :src="coverSrc"
         class="w-full h-full object-cover"
       >
     </div>
@@ -38,7 +40,8 @@ const avatarUrl = computed(() => {
         border-4 border-white shadow-xl bg-white"
     >
       <img
-        :src="avatarUrl"
+        :key="avatarSrc"
+        :src="avatarSrc"
         class="w-full h-full object-cover"
       >
     </div>

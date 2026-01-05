@@ -7,6 +7,7 @@ export interface AchievementModel {
   createdAt: string
   updatedAt: string
   certificate: string
+  skillsIds?: string[]
 }
 
 export interface GetAchievementsResponse {

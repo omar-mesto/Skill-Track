@@ -3,6 +3,7 @@ export interface RegisterResponse {
   message: string
   data: {
     token: string
+    id: string
     name: string
     email: string
     role: string

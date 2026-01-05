@@ -5,6 +5,7 @@ import Posts from '@/components/Profile/tabs/Posts.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 
 const { profile } = useProfessorProfile()
+const storage = useGlobalStore()
 
 const tabs = [
   { name: 'Posts', component: Posts },
@@ -29,9 +30,6 @@ const activeTab = ref(tabs[0])
     >
       {{ tab.name }}
     </button>
-    <h1 class="text-red-500">
-      {{ profile?.user?._id }}
-    </h1>
   </div>
 
   <component

@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useGetProjects, useDeleteProject } from '@@/queries/Profile/student/project'
+import { ref } from 'vue'
+import { useDeleteProject } from '@@/queries/Profile/student/project'
 import EditProjectModal from './EditProjectModal.vue'
 import AddProjectModal from '~/components/Profile/project/AddProjectModal.vue'
 import type { ProjectModel } from '~/models/projectModel'
+import type { SkillModel } from '~/models/skillModel'
 
 const openAdd = ref(false)
 const editData = ref<ProjectModel | null>(null)
 const warningStore = useProjectWarningStore()
+const emit = defineEmits(['changed', 'deleted'])
 
-const { data, refresh } = useGetProjects()
-
-const projects = computed(() => data.value?.data ?? [])
+const props = defineProps<{
+  projects: ProjectModel[]
+  isOwner: boolean
+  skills: SkillModel[]
+  loading?: boolean
+}>()
 
 const deleteProject = async (id: string) => {
-  await useDeleteProject(id)
-  refresh()
+  const { execute } = useDeleteProject(id)
+  await execute()
+  emit('deleted', id)
+  emit('changed')
 }
 </script>
 
@@ -27,26 +34,45 @@ const deleteProject = async (id: string) => {
       </h3>
 
       <UButton
+        v-if="isOwner"
         color="primary"
         class="rounded-full"
+        :skills="skills"
         @click="openAdd = true"
       >
         Add
       </UButton>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div
+      v-if="props.loading"
+      class="space-y-4"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="p-4 bg-gray-100 rounded-xl border animate-pulse"
+      >
+        <div class="h-4 w-1/3 bg-gray-300 rounded mb-3" />
+        <div class="h-3 w-2/3 bg-gray-300 rounded mb-2" />
+        <div class="h-2 w-full bg-gray-300 rounded" />
+      </div>
+    </div>
+    <div
+      v-else
+    >
       <div
         v-for="p in projects"
         :key="p._id"
-        class="p-5 bg-gray-100 rounded-xl shadow-sm border border-gray-200"
+        class="p-4 bg-gray-100 rounded-xl my-3 shadow-sm border border-gray-200"
       >
-        <div class="flex justify-between align-baseline  w-full">
+        <div class="flex justify-between align-baseline items-start">
           <p class="font-bold text-black text-lg">
             {{ p.title }}
           </p>
           <div class="flex justify-end gap-x-3">
             <UButton
+              v-if="isOwner"
               color="warning"
               class="w-9 h-9 rounded-full"
               @click="editData = p"
@@ -64,8 +90,8 @@ const deleteProject = async (id: string) => {
                 class="lucide lucide-pencil-icon lucide-pencil"
               ><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg>
             </UButton>
-
             <UButton
+              v-if="isOwner"
               color="error"
               class="w-9 h-9 rounded-full"
               @click="deleteProject(p._id)"
@@ -115,11 +141,12 @@ const deleteProject = async (id: string) => {
 
     <AddProjectModal
       v-model="openAdd"
-      @created="refresh()"
+      :skills="skills"
+      @created="emit('changed')"
     />
     <EditProjectModal
       v-model="editData"
-      @updated="refresh()"
+      @created="emit('changed')"
     />
   </div>
 </template>

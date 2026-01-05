@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useCreateSkill } from '@@/queries/Profile/student/skill'
-import type { CreateSkillDto } from '@@/models/skillModel'
+import type { CreateSkillForm } from '@@/models/skillModel'
 import { createSkill } from '@@/schema/createSkill'
 import { useErrorStore } from '@@/stores/error'
 import type { RadioGroupItem } from '@nuxt/ui'
@@ -16,7 +16,7 @@ const localOpen = computed({
   set: v => emit('update:modelValue', v),
 })
 
-const form = ref<CreateSkillDto>({
+const form = ref<CreateSkillForm>({
   name: '',
   description: '',
   level: 'beginner',

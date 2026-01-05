@@ -108,14 +108,9 @@ const update = async () => {
   await execute()
 
   if (status.value === 'success') {
-    useToast().add({ description: 'Profile updated', color: 'success', class: 'text-black bg-white' })
-
-    const { refresh } = useProfile()
-    await refresh()
-
-    emit('updated')
-    emit('update:modelValue', false)
-  }
+  emit('updated')
+  emit('update:modelValue', false)
+}
 
   isSaving.value = false
 }
@@ -146,6 +141,7 @@ const update = async () => {
         <UFormField label="Full Name">
           <UInput
             v-model="form.fullName"
+            disabled
             class="rounded-lg bg-white text-black block"
             size="xl"
             variant="subtle"

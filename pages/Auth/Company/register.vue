@@ -12,6 +12,7 @@ const router = useRouter()
 const companyFrom = ref({
   name: '',
   email: '',
+  licenseImage: null as File | null,
   password: '',
   avatar: null as File | null,
   coverImage: null as File | null,
@@ -40,6 +41,11 @@ const handleCover = (e: Event) => {
   if (file) companyFrom.value.coverImage = file
 }
 
+const handleLicense = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (file) companyFrom.value.licenseImage = file
+}
+
 const registerUser = async () => {
   isLoading.value = true
 
@@ -51,6 +57,7 @@ const registerUser = async () => {
   formData.append('companyName', companyFrom.value.companyName)
   if (companyFrom.value.avatar) formData.append('avatar', companyFrom.value.avatar)
   if (companyFrom.value.coverImage) formData.append('coverImage', companyFrom.value.coverImage)
+  if (companyFrom.value.licenseImage) formData.append('licenseImage', companyFrom.value.licenseImage)
 
   const { data, status } = await useRegisterCompany(formData)
 
@@ -62,6 +69,7 @@ const registerUser = async () => {
     globalStore.role = loginData.data.role
     globalStore.name = loginData.data.name
     globalStore.email = loginData.data.email
+    globalStore.id = loginData.data.id
 
     toast.add({
       description: 'Account created successfully!',
@@ -93,7 +101,7 @@ const registerUser = async () => {
 
     <div class="w-full md:w-1/2 h-full grid place-items-center">
       <div class="flex w-full flex-col items-center px-6">
-        <p class="text-lg md:text-3xl font-bold text-black mt-16">
+        <p class="text-lg md:text-3xl font-bold text-black mt-3">
           Company Register
         </p>
 
@@ -186,7 +194,10 @@ const registerUser = async () => {
                 >
               </UFormField>
 
-              <UFormField label="Cover Image">
+              <UFormField
+                label="Cover Image"
+                class="my-2"
+              >
                 <input
                   type="file"
                   accept="image/*"
@@ -197,7 +208,14 @@ const registerUser = async () => {
                   @change="handleCover"
                 >
               </UFormField>
-
+              <UFormField label="Company License">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="border-2 w-full rounded-md p-2 bg-white text-black"
+                  @change="handleLicense"
+                >
+              </UFormField>
               <UButton
                 :loading="isLoading"
                 :disabled="formIsValid"

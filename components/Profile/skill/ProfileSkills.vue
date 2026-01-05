@@ -1,48 +1,51 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useGetMySkills, useDeleteSkill } from '@@/queries/Profile/student/skill'
+import { computed, ref, watch } from 'vue'
+import { useDeleteSkill } from '@@/queries/Profile/student/skill'
+import ViewSkillModal from './ViewSkillModal.vue'
 import AddSkillModal from './AddSkillModal.vue'
 import EditSkillModal from './EditSkillModal.vue'
 import type { SkillModel } from '~/models/skillModel'
+import type { ProjectModel } from '~/models/projectModel'
+import type { AchievementModel } from '~/models/AchievementModel'
+import type { CourseraCertificateModel } from '~/models/courseraModel'
 
-const { data, refresh } = useGetMySkills()
+const props = defineProps<{
+  skills: SkillModel[]
+  projects: ProjectModel[]
+  achievements: AchievementModel[]
+  certificates: CourseraCertificateModel[]
+  isOwner: boolean
+  loading?: boolean
+}>()
+
+const emit = defineEmits(['changed'])
 
 const openAdd = ref(false)
 const editData = ref<SkillModel | null>(null)
+const viewSkillId = ref<string | null>(null)
+const Skills = computed(() => {
+  return props.skills.map(skill => {
+    const projectCount = skill.linkedProjects?.length ?? 0
+    const achievementCount = skill.linkedAchievements?.length ?? 0
+    const certificateCount = skill.linkedCertificates?.length ?? 0
 
-const skills = computed(() => {
-  if (!data.value) return []
+    const projectScore = Math.min(projectCount, 4) * 10
+    const achievementScore = Math.min(achievementCount, 4) * 10
+    const certificateScore = Math.min(certificateCount, 2) * 10
 
-  return data.value.data.map(skill => {
-    const projectCount = skill.linkedProjects.length
-    const achievementCount = skill.linkedAchievements.length
-    const certificateCount = skill.linkedCertificates.length
-
-    let projectScore = 0
-    if (projectCount >= 4) projectScore = 40
-    else if (projectCount === 3) projectScore = 30
-    else if (projectCount === 2) projectScore = 20
-    else if (projectCount === 1) projectScore = 10
-
-    let achievementScore = 0
-    if (achievementCount >= 5) achievementScore = 40
-    else if (achievementCount === 3 || achievementCount === 4) achievementScore = 30
-    else if (achievementCount === 2) achievementScore = 20
-    else if (achievementCount === 1) achievementScore = 10
-
-    let certificateScore = 0
-    if (certificateCount >= 2) certificateScore = 20
-    else if (certificateCount === 1) certificateScore = 10
-
-    const progress = Math.min(projectScore + achievementScore + certificateScore, 100)
-
-    return { ...skill, progress }
+    return {
+      ...skill,
+      progress: projectScore + achievementScore + certificateScore,
+    }
   })
 })
 
 const deleteSkill = async (id: string) => {
-  await useDeleteSkill(id)
-  refresh()
+  const { execute, status } = useDeleteSkill(id)
+  await execute()
+  if (status.value === 'success') {
+    emit('changed')
+  }
 }
 </script>
 
@@ -53,6 +56,7 @@ const deleteSkill = async (id: string) => {
         Skills
       </h3>
       <UButton
+        v-if="isOwner"
         color="primary"
         class="rounded-full"
         @click="openAdd = true"
@@ -63,19 +67,20 @@ const deleteSkill = async (id: string) => {
 
     <div class="space-y-4">
       <div
-        v-for="skill in skills"
+        v-for="skill in Skills"
         :key="skill._id"
-        class="p-4 bg-gray-100 rounded-xl shadow-sm border"
+        class="p-4 bg-gray-100 rounded-xl hover:cursor-pointer shadow-sm border"
+        @click="viewSkillId = skill._id"
       >
         <div class="flex justify-between items-start">
           <p class="font-semibold text-black text-lg">
             {{ skill.name }} <span class="text-primary text-sm">({{ skill.level }})</span>
           </p>
-
           <div class="sm:flex block justify-end gap-x-3">
             <UButton
+              v-if="isOwner"
               color="warning"
-              class="w-9 h-9  rounded-full"
+              class="w-9 h-9 rounded-full"
               @click="editData = skill"
             >
               <svg
@@ -88,12 +93,13 @@ const deleteSkill = async (id: string) => {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-pencil-icon lucide-pencil"
+                class="lucide lucide-pencil"
               ><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg>
             </UButton>
             <UButton
+              v-if="isOwner"
               color="error"
-              class="w-9 h-9 sm:my-0 my-2 rounded-full"
+              class="w-9 h-9 rounded-full"
               @click="deleteSkill(skill._id)"
             >
               <svg
@@ -106,20 +112,18 @@ const deleteSkill = async (id: string) => {
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="lucide lucide-bookmark-x-icon lucide-bookmark-x"
+                class="lucide lucide-bookmark-x"
               ><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z" /><path d="m14.5 7.5-5 5" /><path d="m9.5 7.5 5 5" /></svg>
             </UButton>
           </div>
         </div>
-
         <p class="text-gray-600 text-sm">
           {{ skill.description }}
         </p>
-
         <div class="mt-3">
           <div class="bg-gray-300 h-2 rounded-full">
             <div
-              class="bg-Sequand h-full rounded-full"
+              class="bg-Sequand h-full rounded-full transition-all duration-500"
               :style="{ width: skill.progress + '%' }"
             />
           </div>
@@ -132,11 +136,14 @@ const deleteSkill = async (id: string) => {
 
     <AddSkillModal
       v-model="openAdd"
-      @created="refresh()"
+      @created="emit('changed')"
     />
     <EditSkillModal
       v-model="editData"
-      @updated="refresh()"
+      @updated="emit('changed')"
+    />
+    <ViewSkillModal
+      v-model="viewSkillId"
     />
   </div>
 </template>

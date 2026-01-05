@@ -16,6 +16,7 @@ const professorFrom = ref({
   avatar: null as File | null,
   coverImage: null as File | null,
   specialization: '',
+  certificate: null as File | null,
   bio: '',
 })
 
@@ -35,6 +36,11 @@ const handleAvatar = (e: Event) => {
   if (file) professorFrom.value.avatar = file
 }
 
+const handleCertificate = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (file) professorFrom.value.certificate = file
+}
+
 const handleCover = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (file) professorFrom.value.coverImage = file
@@ -51,6 +57,7 @@ const registerUser = async () => {
   formData.append('specialization', professorFrom.value.specialization)
   if (professorFrom.value.avatar) formData.append('avatar', professorFrom.value.avatar)
   if (professorFrom.value.coverImage) formData.append('coverImage', professorFrom.value.coverImage)
+  if (professorFrom.value.certificate) formData.append('certificate', professorFrom.value.certificate)
 
   const { data, status } = await useRegisterProfessor(formData)
 
@@ -62,6 +69,7 @@ const registerUser = async () => {
     globalStore.role = loginData.data.role
     globalStore.name = loginData.data.name
     globalStore.email = loginData.data.email
+    globalStore.id = loginData.data.id
 
     toast.add({
       description: 'Account created successfully!',
@@ -197,7 +205,14 @@ const registerUser = async () => {
                   @change="handleCover"
                 >
               </UFormField>
-
+              <UFormField label="Certificate">
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  class="border-2 w-full rounded-md p-2 bg-white text-black"
+                  @change="handleCertificate"
+                >
+              </UFormField>
               <UButton
                 :loading="isLoading"
                 :disabled="formIsValid"

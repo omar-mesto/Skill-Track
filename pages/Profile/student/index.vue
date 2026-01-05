@@ -1,17 +1,42 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import ProfileHeader from '@@/components/Profile/ProfileHeader.vue'
+import ProfileSidebar from '~/components/layout/ProfileSidebar.vue'
 
-const { profile } = useProfile()
+const route = useRoute()
+const sidebarOpen = ref(false)
+const query = computed(() => route.query as { id?: string })
+const userId = computed(() => query.value.id)
+const { profile, refresh } = useProfile(userId.value)
+const imageVersion = ref(0)
+const onProfileUpdated = async () => {
+  await refresh()
+}
 </script>
 
 <template>
-  <div class="w-full min-h-screen bg-white pb-20">
-    <ProfileHeader
-      :key="profile?.user?.avatar + '-' + profile?.user?.coverImage"
+  <div class="flex min-h-screen bg-[#F4F7FB] min-w-xl">
+    <ProfileSidebar
+      :open="sidebarOpen"
+      @close="sidebarOpen = false"
     />
-    <div class="mx-4 md:mx-20 bg-background shadow-2xl rounded-b-xl p-5">
-      <ProfileInformation />
-      <ProfileTabs />
-    </div>
+
+    <main class="flex-1 mb-6">
+      <ProfileHeader
+        :profile="profile"
+        :image-version="imageVersion"
+        @updated="onProfileUpdated"
+      />
+
+      <div class="mx-4 md:mx-20 bg-white shadow-2xl rounded-b-xl p-5">
+        <ProfileInformation
+          :is-owner="true"
+          :current-user="profile?.user"
+          @open-sidebar="sidebarOpen = true"
+          @updated="onProfileUpdated"
+        />
+        <ProfileTabs />
+      </div>
+    </main>
   </div>
 </template>

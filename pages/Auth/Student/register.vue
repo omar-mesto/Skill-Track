@@ -57,6 +57,7 @@ const registerUser = async () => {
     globalStore.role = loginData.data.role
     globalStore.name = loginData.data.name
     globalStore.email = loginData.data.email
+    globalStore.id = loginData.data.id
 
     toast.add({
       description: 'Account created successfully!',
@@ -111,6 +112,16 @@ const registerUser = async () => {
                   size="xl"
                   variant="subtle"
                 />
+                <div class="flex items-start gap-2 mt-2 text-sm text-yellow-700 bg-yellow-100 border border-yellow-300 rounded-lg p-3">
+                  <UIcon
+                    name="i-heroicons-exclamation-triangle"
+                    class="w-12 h-10"
+                  />
+                  <p>
+                    <strong>Important Notice:</strong>
+                    Please enter your real full name exactly, This name will be used for verification and cannot be changed later.
+                  </p>
+                </div>
               </UFormField>
 
               <UFormField
