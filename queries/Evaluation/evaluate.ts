@@ -1,5 +1,6 @@
 import { useAPI } from '@@/services/baseApi'
-import type { AIEvaluationModel, ProfessorEvaluationItem, ProfessorEvaluationModel } from '~/models/professorEvaluationModel'
+import type { EvaluatePayload } from '~/models/EvaluateModel'
+import type { AIEvaluationModel, ProfessorEvaluationModel } from '~/models/professorEvaluationModel'
 
 export const useGetProfessorEvaluation = () => {
   return useAPI<ProfessorEvaluationModel>({
@@ -19,5 +20,14 @@ export const useGetAIEvaluation = () => {
     queryKey: 'ai-evaluation',
     type: 'GET',
     isLazy: true,
+  })
+}
+
+export const useProfessorEvaluateStudent = () => {
+  return useAPI({
+    url: '/evaluate',
+    type: 'POST',
+    queryKey: 'professor-evaluation',
+    immediate: false,
   })
 }

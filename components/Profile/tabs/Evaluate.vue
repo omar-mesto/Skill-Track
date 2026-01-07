@@ -167,7 +167,9 @@ const getAiEvaluation = async () => {
         class="border rounded-xl p-4 bg-gray-50"
       >
         <UUser
+          class="text-black"
           :name="selectedProfessorEvaluation.professor.name"
+          :ui="{ name: 'text-black' }"
           :avatar="{
             src: selectedProfessorEvaluation.professor.avatar
               ? 'http://localhost:5000/' + selectedProfessorEvaluation.professor.avatar
@@ -190,7 +192,7 @@ const getAiEvaluation = async () => {
           <span class="text-xl font-bold text-primary">
             {{ selectedProfessorEvaluation.totalScore }}
           </span>
-          <span class="text-sm text-gray-500">/ 100</span>
+          <span class="text-sm text-gray-500">/ 40</span>
         </div>
 
         <div class="mt-3 space-y-1">

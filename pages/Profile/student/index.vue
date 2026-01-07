@@ -11,6 +11,7 @@ const { profile, refresh } = useProfile(userId.value)
 const imageVersion = ref(0)
 const onProfileUpdated = async () => {
   await refresh()
+  imageVersion.value = Date.now()
 }
 </script>
 
@@ -23,6 +24,7 @@ const onProfileUpdated = async () => {
 
     <main class="flex-1 mb-6">
       <ProfileHeader
+        :key="imageVersion"
         :profile="profile"
         :image-version="imageVersion"
         @updated="onProfileUpdated"

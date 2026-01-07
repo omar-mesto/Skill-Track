@@ -1,16 +1,45 @@
-import { computed } from 'vue'
-import type { ProfessorProfileResponse } from '@@/models/profileInformationModel'
-import { useGetProfessorProfileInformation } from '@@/queries/Profile/professor/information'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useGetFullProfile } from '@@/queries/Profile/student/information'
+import { useGlobalStore } from '@@/stores/global'
+import type { ProfessorProfileData } from '~/models/profileInformationModel'
 
-export function useProfessorProfile() {
-  const { data, refresh } = useGetProfessorProfileInformation()
+export function useProfessorProfile(userId?: string) {
+  const store = useGlobalStore()
+  const route = useRoute()
 
-  const profile = computed<ProfessorProfileResponse['data'] | null>(() => {
-    return data.value?.data || null
-  })
+  const resolvedUserId = computed(() =>
+    userId ?? (route.params.id as string) ?? store.id,
+  )
+
+  const profile = ref<ProfessorProfileData | null>(null)
+  const imageVersion = ref(Date.now())
+
+  const { data, refresh, status } = useGetFullProfile(resolvedUserId)
+
+  watch(
+    () => data.value,
+    (v) => {
+      if (!v?.data) return
+
+      // ✅ هنا التصحيح المهم
+      if (v.data.profile?.user?.role === 'professor') {
+        profile.value = v.data as ProfessorProfileData
+        imageVersion.value = Date.now()
+      }
+    },
+    { immediate: true },
+  )
+
+  const isOwner = computed(() =>
+    profile.value?.profile.user._id === store.id,
+  )
 
   return {
     profile,
+    isOwner,
+    isLoading: computed(() => status.value === 'pending'),
+    imageVersion,
     refresh,
   }
 }

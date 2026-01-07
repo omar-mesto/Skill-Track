@@ -7,6 +7,7 @@ export function useAPI<T>(options: {
   payload?: object | FormData
   queryKey: string
   isLazy?: boolean
+  immediate?: boolean
   params?: { skip: Ref<number>, limit: Ref<number> }
   type: 'DELETE' | 'GET' | 'POST' | 'PUT'
 }) {

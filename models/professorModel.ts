@@ -8,3 +8,22 @@ export interface SingleApprovalResponse<T> {
   message: string
   data: T
 }
+export interface BaseUser {
+  _id: string
+  name: string
+  email: string
+  avatar?: string
+  coverImage?: string
+  role: 'student' | 'professor' | 'company'
+}
+
+export interface Profile {
+  _id: string
+  user: BaseUser
+  fullName: string
+  bio?: string
+  university?: string
+  phone?: string
+  address?: string
+  postion?: string
+}

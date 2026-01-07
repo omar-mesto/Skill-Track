@@ -115,10 +115,20 @@ export interface ProfessorProfileUser {
   role: string
 }
 
+export interface ProfessorExtra {
+  _id: string
+  bio?: string
+  specialization?: string
+  certificate?: string
+  approvalStatus?: string
+}
+
 export interface ProfessorProfileData {
-  user: ProfessorProfileUser
-  bio: string
-  specialization: string
+  profile: {
+    user: ProfileUser & { role: 'professor' }
+    fullName: string
+  }
+  professorExtra: ProfessorExtra | null
 }
 
 export interface ProfessorProfileResponse {
