@@ -82,6 +82,7 @@ const deleteSkill = async (id: string) => {
               color="warning"
               class="w-9 h-9 rounded-full"
               @click="editData = skill"
+              @click.stop="editData = skill"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -101,6 +102,7 @@ const deleteSkill = async (id: string) => {
               color="error"
               class="w-9 h-9 rounded-full"
               @click="deleteSkill(skill._id)"
+              @click.stop="deleteSkill(skill._id)"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
