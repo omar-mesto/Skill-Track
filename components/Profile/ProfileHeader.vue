@@ -2,51 +2,36 @@
 import { computed } from 'vue'
 import type { ProfileResponse } from '@@/models/profileInformationModel'
 
-const API_BASE_URL = 'http://localhost:5000/'
+const BASE = 'http://localhost:5000/'
 
 const props = defineProps<{
   profile: ProfileResponse['data'] | null
   imageVersion: number
 }>()
 
-const normalize = (path?: string | null) =>
-  path ? path.replace(/\\/g, '/') : null
+const avatar = computed(() =>
+  props.profile?.user?.avatar
+    ? `${BASE}${props.profile.user.avatar}?v=${props.imageVersion}`
+    : '/default-avatar.png',
+)
 
-const coverUrl = computed(() => {
-  const p = props.profile?.user?.coverImage
-  const n = normalize(p)
-
-  return n
-    ? `${API_BASE_URL}${n}?v=${props.imageVersion}`
-    : '/coverImage.jpg'
-})
-
-const avatarUrl = computed(() => {
-  const p = props.profile?.user?.avatar
-  const n = normalize(p)
-
-  return n
-    ? `${API_BASE_URL}${n}?v=${props.imageVersion}`
-    : '/StudentLogin.png'
-})
+const cover = computed(() =>
+  props.profile?.user?.coverImage
+    ? `${BASE}${props.profile.user.coverImage}?v=${props.imageVersion}`
+    : '/coverImage.jpg',
+)
 </script>
 
 <template>
-  <div class="relative w-full">
-    <div class="w-full h-40 sm:h-48 md:h-60 lg:h-60 overflow-hidden">
-      <img
-        :src="coverUrl"
-        class="w-full h-full object-fill"
-      >
-    </div>
-
-    <div
-      class="absolute left-5 sm:left-26 -bottom-12 sm:-bottom-16
-        w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden
-        border-4 border-white shadow-xl bg-white"
+  <div class="relative">
+    <img
+      :src="cover"
+      class="w-full h-56 object-cover"
     >
+
+    <div class="absolute left-6 -bottom-12 w-28 h-28 rounded-full border-4 bg-white overflow-hidden">
       <img
-        :src="avatarUrl"
+        :src="avatar"
         class="w-full h-full object-cover"
       >
     </div>

@@ -6,12 +6,25 @@ import Followers from '@/components/Profile/tabs/Followers.vue'
 
 const { profile } = useProfessorProfile()
 const storage = useGlobalStore()
+const currentUser = computed(() => ({
+  _id: storage.id,
+  role: storage.role,
+}))
 
 const tabs = [
   { name: 'Posts', component: Posts },
   { name: 'Follow', component: Followers },
 ]
 
+const isMyProfile = computed(() =>
+  currentUser.value._id === profile.value?.profile.user._id,
+)
+
+const canFollow = computed(() =>
+  !isMyProfile.value,
+)
+
+const userId = computed(() => profile.value?.profile?.user?._id)
 const activeTab = ref(tabs[0])
 </script>
 
@@ -34,6 +47,7 @@ const activeTab = ref(tabs[0])
 
   <component
     :is="activeTab.component"
-    :user-id="profile?.user?._id"
+    v-if="userId"
+    :user-id="profile?.profile?.user"
   />
 </template>

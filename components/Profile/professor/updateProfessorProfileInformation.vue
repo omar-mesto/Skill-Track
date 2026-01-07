@@ -27,11 +27,12 @@ const newCover = ref<File | null>(null)
 
 watch(
   () => props.profile,
-  p => {
-    if (p) {
-      form.value.name = p.user.name
-      form.value.bio = p.bio || ''
-    }
+  (p) => {
+    if (!p) return
+
+    form.value.name = p.profile?.user?.name
+    form.value.bio = p.professorExtra?.bio ?? ''
+    form.value.specialization = p.professorExtra?.specialization ?? ''
   },
   { immediate: true },
 )
@@ -67,9 +68,6 @@ const update = async () => {
 
   if (status.value === 'success') {
     toast.add({ description: 'Professor Profile Updated', color: 'success', class: 'text-black bg-white' })
-
-    const { refresh } = useProfessorProfile()
-    await refresh()
 
     emit('updated')
     emit('update:modelValue', false)
@@ -107,6 +105,7 @@ const update = async () => {
             class="rounded-lg bg-white text-black block"
             size="xl"
             variant="subtle"
+            disabled
           />
         </UFormField>
 

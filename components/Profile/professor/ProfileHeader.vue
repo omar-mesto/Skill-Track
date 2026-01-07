@@ -1,46 +1,48 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ProfessorProfileData } from '~/models/profileInformationModel'
 
-const API_BASE_URL = 'http://localhost:5000/'
+const props = defineProps<{
+  profile: ProfessorProfileData
+  imageVersion: number
+}>()
 
-const { profile } = useProfessorProfile()
+const emit = defineEmits(['open-sidebar'])
 
-const normalize = (path?: string | null) =>
-  path ? path.replace(/\\/g, '/') : null
+const BASE = 'http://localhost:5000/'
 
-const avatarUrl = computed(() => {
-  const p = profile.value?.user?.avatar
-  const n = normalize(p)
+const avatar = computed(() =>
+  props?.profile?.profile?.user?.avatar
+    ? `${BASE}${props.profile?.profile?.user?.avatar}?v=${props.imageVersion}`
+    : '/default-avatar.png',
+)
 
-  return n ? `${API_BASE_URL}${n}` : '/coverImage.jpg'
-})
-
-const coverUrl = computed(() => {
-  const p = profile.value?.user?.coverImage
-  const n = normalize(p)
-
-  return n ? `${API_BASE_URL}${n}` : '/StudentLogin.png'
-})
+const cover = computed(() =>
+  props?.profile?.profile?.user?.coverImage
+    ? `${BASE}${props.profile?.profile?.user?.coverImage}?v=${props.imageVersion}`
+    : '/coverImage.jpg',
+)
 </script>
 
 <template>
-  <div class="relative w-full">
-    <div class="w-full h-40 sm:h-48 md:h-60 lg:h-72 overflow-hidden">
+  <div class="relative">
+    <img
+      :src="cover"
+      class="w-full h-56 object-cover"
+    >
+
+    <div class="absolute left-6 -bottom-12 w-28 h-28 rounded-full border-4 bg-white overflow-hidden">
       <img
-        :src="coverUrl"
+        :src="avatar"
         class="w-full h-full object-cover"
       >
     </div>
 
-    <div
-      class="absolute left-5 sm:left-26 -bottom-12 sm:-bottom-16
-        w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden
-        border-4 border-white shadow-xl bg-white"
+    <button
+      class="absolute top-4 left-4 md:hidden"
+      @click="emit('open-sidebar')"
     >
-      <img
-        :src="avatarUrl"
-        class="w-full h-full object-cover"
-      >
-    </div>
+      ☰
+    </button>
   </div>
 </template>
