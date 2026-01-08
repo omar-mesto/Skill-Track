@@ -46,6 +46,7 @@ export interface SkillLinkedCertificate {
   _id: string
   profile: string
   name: string
+  description: string
   provider: string
   issuedAt: string
   url: string

@@ -44,3 +44,33 @@ export interface FullProfileResponse {
   message: string
   data: FullProfileData
 }
+
+export interface ProfileUser {
+  _id: string
+  name: string
+  email: string
+  avatar?: string
+  coverImage?: string
+  role: UserRole
+}
+
+export interface CompanyExtra {
+  _id: string
+  companyName: string
+  bio?: string
+  approvalStatus?: string
+}
+
+export interface CompanyProfileData {
+  profile: {
+    user: ProfileUser & { role: 'company' }
+    fullName: string
+  }
+  companyExtra: CompanyExtra
+}
+
+export interface CompanyProfileResponse {
+  success: boolean
+  message: string
+  data: CompanyProfileData
+}

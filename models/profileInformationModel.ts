@@ -64,23 +64,6 @@ export interface UpdateProfileDto {
   postion: string
 }
 
-export interface companyProfileData {
-  user: ProfileUser
-  name: string
-  email: string
-  password: string
-  companyName: string
-  bio: string
-  avatar: string
-  coverImage: string
-}
-
-export interface companyProfileResponse {
-  success: boolean
-  message: string
-  data: companyProfileData
-}
-
 export interface CompanyProfileUser {
   _id: string
   name: string
@@ -90,17 +73,22 @@ export interface CompanyProfileUser {
   coverImage: string
 }
 
-export interface CompanyProfileData {
+export interface CompanyExtra {
   _id: string
-  companyName: string
-  bio: string
-  approvalStatus: string
-  createdAt: string
-  updatedAt: string
-  user: CompanyProfileUser
+  companyName?: string
+  bio?: string
+  approvalStatus?: string
 }
 
-export interface CompanyProfileResponse {
+export interface CompanyProfileData {
+  profile: {
+    user: ProfileUser & { role: 'company' }
+    fullName: string
+  }
+  companyExtra: CompanyExtra | null
+}
+
+export interface companyProfileResponse {
   success: boolean
   message: string
   data: CompanyProfileData
