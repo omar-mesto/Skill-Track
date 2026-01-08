@@ -1,10 +1,11 @@
 import { useAPI } from '@@/services/baseApi'
-import type { EvaluatePayload } from '~/models/EvaluateModel'
 import type { AIEvaluationModel, ProfessorEvaluationModel } from '~/models/professorEvaluationModel'
 
-export const useGetProfessorEvaluation = () => {
+export const useGetProfessorEvaluation = (studentId?: string) => {
+  const url = `/evaluate/student/${studentId}`
+
   return useAPI<ProfessorEvaluationModel>({
-    url: '/evaluate/me',
+    url: url,
     queryKey: 'professor-evaluation',
     type: 'GET',
   })

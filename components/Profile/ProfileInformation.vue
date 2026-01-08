@@ -188,7 +188,7 @@ const onUpdated = async () => {
           Loading...
         </template>
         <template v-else>
-          {{ isFollowing ? 'Un Follow' : 'Follow' }}
+          {{ isFollowing ? 'Remove Follow' : 'Follow' }}
         </template>
       </UButton>
 

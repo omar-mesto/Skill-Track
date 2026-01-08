@@ -1,49 +1,74 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
+import type { ProfessorProfileData } from '~/models/profileInformationModel'
 
-const { profile } = useCompanyProfile()
+const props = defineProps<{
+  profile: ProfessorProfileData
+  imageVersion: number
+}>()
 
-const cacheBuster = ref(Date.now())
+const emit = defineEmits(['open-sidebar'])
 
-const avatarSrc = computed(() => {
-  const url = profile.value?.user?.avatar
+const BASE = 'http://localhost:5000/'
 
-  return url ? `${url}?v=${cacheBuster.value}` : ''
-})
+const hasAvatar = computed(() =>
+  !!props.profile?.profile?.user?.avatar,
+)
 
-const coverSrc = computed(() => {
-  const url = profile.value?.user?.coverImage
+const hasCover = computed(() =>
+  !!props.profile?.profile?.user?.coverImage,
+)
 
-  return url ? `${url}?v=${cacheBuster.value}` : ''
-})
+const avatar = computed(() =>
+  hasAvatar.value
+    ? `${BASE}${props.profile.profile.user.avatar}?v=${props.imageVersion}`
+    : '',
+)
 
-const refreshImages = () => {
-  cacheBuster.value = Date.now()
-}
-
-defineExpose({ refreshImages })
+const cover = computed(() =>
+  hasCover.value
+    ? `${BASE}${props.profile.profile.user.coverImage}?v=${props.imageVersion}`
+    : '',
+)
 </script>
 
 <template>
-  <div class="relative w-full">
-    <div class="w-full h-40 sm:h-48 md:h-60 lg:h-72 overflow-hidden">
+  <div class="relative">
+    <div class="w-full h-56">
       <img
-        :key="coverSrc"
-        :src="coverSrc"
-        class="w-full h-full object-cover"
+        v-if="hasCover"
+        :src="cover"
+        class="w-full h-56 object-cover"
       >
+      <div
+        v-else
+        class="w-full h-56 bg-gray-200 animate-pulse"
+      />
     </div>
-
     <div
-      class="absolute left-5 sm:left-26 -bottom-12 sm:-bottom-16
-        w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden
-        border-4 border-white shadow-xl bg-white"
+      class="absolute left-6 -bottom-12 w-28 h-28 rounded-full border-4 bg-white overflow-hidden"
     >
       <img
-        :key="avatarSrc"
-        :src="avatarSrc"
+        v-if="hasAvatar"
+        :src="avatar"
         class="w-full h-full object-cover"
       >
+      <div
+        v-else
+        class="w-full h-full bg-gray-200 animate-pulse"
+      />
     </div>
+
+    <UButton
+      variant="ghost"
+      color="info"
+      class="absolute top-4 left-4 md:hidden"
+      @click="emit('open-sidebar')"
+    >
+      <UIcon
+        name="i-heroicons-bars-3"
+        class="w-6 h-6"
+      />
+    </UButton>
   </div>
 </template>

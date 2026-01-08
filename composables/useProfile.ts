@@ -51,5 +51,6 @@ export function useProfile(userId?: string) {
     isOwner,
     isLoading,
     refresh,
+    userId: resolvedUserId,
   }
 }

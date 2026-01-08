@@ -48,6 +48,6 @@ const activeTab = ref(tabs[0])
   <component
     :is="activeTab.component"
     v-if="userId"
-    :user-id="profile?.profile?.user"
+    :user-id="profile?.profile?.user?._id"
   />
 </template>

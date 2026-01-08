@@ -7,6 +7,7 @@ import type { ProfessorEvaluationItem } from '~/models/professorEvaluationModel'
 
 const props = defineProps<{
   isOwner: boolean
+  studentId?: string
 }>()
 
 const globalStore = useGlobalStore()
@@ -25,10 +26,11 @@ const showAiDetails = ref(false)
 
 const REFRESH_INTERVAL_MINUTES = 10
 
-const fetchProfessorEvaluations = async () => {
+const fetchProfessorEvaluations = async (id?: string) => {
+  if (!id) return
   loadingProfessor.value = true
   try {
-    const { data, status } = await useGetProfessorEvaluation()
+    const { data, status } = await useGetProfessorEvaluation(props.studentId)
     if (status.value === 'success' && data.value?.data) {
       professorEvaluations.value = data.value.data
       professorIndex.value = 0
@@ -40,6 +42,11 @@ const fetchProfessorEvaluations = async () => {
   }
 }
 
+watch(() => props.studentId, (newId) => {
+  if (newId) {
+    fetchProfessorEvaluations(newId)
+  }
+}, { immediate: true })
 onMounted(fetchProfessorEvaluations)
 
 const selectedProfessorEvaluation = computed(() => {

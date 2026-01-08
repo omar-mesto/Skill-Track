@@ -2,17 +2,30 @@
 import { ref } from 'vue'
 
 import Posts from '@/components/Profile/tabs/Posts.vue'
-import Tasks from '@/components/Profile/tabs/Tasks.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 
 const { profile } = useCompanyProfile()
+const storage = useGlobalStore()
+const currentUser = computed(() => ({
+  _id: storage.id,
+  role: storage.role,
+}))
 
 const tabs = [
   { name: 'Posts', component: Posts },
-  { name: 'Tasks', component: Tasks },
+  { name: 'Tasks', component: Posts },
   { name: 'Follow', component: Followers },
 ]
 
+const isMyProfile = computed(() =>
+  currentUser.value._id === profile.value?.profile.user._id,
+)
+
+const canFollow = computed(() =>
+  !isMyProfile.value,
+)
+
+const userId = computed(() => profile.value?.profile?.user?._id)
 const activeTab = ref(tabs[0])
 </script>
 
@@ -31,13 +44,11 @@ const activeTab = ref(tabs[0])
     >
       {{ tab.name }}
     </button>
-    <h1 class="text-red-500">
-      {{ profile?.user?._id }}
-    </h1>
   </div>
 
   <component
     :is="activeTab.component"
-    :user-id="profile?.user?._id"
+    v-if="userId"
+    :user-id="profile?.profile?.user?._id"
   />
 </template>

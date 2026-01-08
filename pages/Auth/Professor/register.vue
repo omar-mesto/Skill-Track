@@ -101,7 +101,7 @@ const registerUser = async () => {
 
     <div class="w-full md:w-1/2 h-full grid place-items-center">
       <div class="flex w-full flex-col items-center px-6">
-        <p class="text-lg md:text-3xl font-bold text-black mt-16">
+        <p class="text-lg md:text-3xl font-bold text-black mt-3">
           Professor Register
         </p>
 
@@ -198,7 +198,7 @@ const registerUser = async () => {
                 <input
                   type="file"
                   accept="image/*"
-                  class="border-2 w-full rounded-md p-2 bg-white text-black block"
+                  class="border-2 my-3 w-full rounded-md p-2 bg-white text-black block"
                   size="xl"
                   variant="subtle"
                   block

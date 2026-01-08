@@ -1,24 +1,49 @@
-<script lang="ts" setup>
-import { computed, ref } from 'vue'
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useGetProfileQR } from '@@/queries/Profile/student/information'
 import { useLogout } from '@@/queries/Auth/admin'
-import { useGetCompanyProfileInformation } from '@@/queries/Profile/company/information'
 import UpdateCompanyProfileInformation from './updateCompanyProfileInformation.vue'
+import type { CompanyProfileData } from '~/models/profileInformationModel'
 
-const store = useGlobalStore()
-const showLogoutConfirm = ref(false)
+const props = defineProps<{
+  profile: CompanyProfileData | null
+  isOwner: boolean
+}>()
+
+const user = computed(() => props.profile?.profile.user)
+const companyExtra = computed(() => props.profile?.companyExtra)
+
+const emit = defineEmits(['updated'])
+
 const showEdit = ref(false)
+const showQrModal = ref(false)
+const { data: qrResponse, refresh: fetchQr } = useGetProfileQR()
+const qrData = computed(() => qrResponse.value?.data || null)
+
+watch(showQrModal, (v) => {
+  if (v && props.isOwner) fetchQr()
+})
+
+const copyProfileUrl = async () => {
+  if (!qrData.value?.profileUrl) return
+  await navigator.clipboard.writeText(qrData.value.profileUrl)
+
+  useToast().add({
+    description: 'Profile link copied successfully',
+    color: 'success',
+    class: 'text-black bg-white',
+  })
+}
+
 const router = useRouter()
-
-const { data, refresh } = useGetCompanyProfileInformation()
-const profile = computed(() => data.value?.data || null)
-
-const { execute: logoutExecute, status: logoutStatus } = useLogout()
-
+const showLogoutConfirm = ref(false)
 const confirmLogout = async () => {
+  const { execute: logoutExecute, status: logoutStatus } = useLogout()
   await logoutExecute()
+
   if (logoutStatus.value === 'success') {
-    store.logout()
+    useGlobalStore().logout()
     showLogoutConfirm.value = false
     router.push('/')
   }
@@ -26,78 +51,106 @@ const confirmLogout = async () => {
 </script>
 
 <template>
-  <div class="sm:mt-16 mt-10 px-4 sm:px-6 md:px-8">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-      <div class="space-y-2">
-        <h2 class="text-3xl font-bold text-gray-900">
-          {{ profile?.name }}
-        </h2>
+  <div class="flex justify-end gap-3 mb-4 mt-8 sm:mt-0">
+    <UButton
+      v-if="isOwner"
+      color="secondary"
+      variant="outline"
+      class="rounded-full flex items-center gap-2"
+      @click="showQrModal = true"
+    >
+      <UIcon
+        name="i-heroicons-qr-code"
+        class="w-5 h-5"
+      />
+      Share
+    </UButton>
 
-        <p class="text-lg text-secondary">
-          {{ profile?.companyName || 'No Company Name' }}
-        </p>
+    <UButton
+      v-if="isOwner"
+      color="primary"
+      @click="showEdit = true"
+    >
+      Edit Profile
+    </UButton>
+    <UButton
+      v-if="isOwner"
+      class="rounded-full hover:bg-red-700"
+      @click="showLogoutConfirm = true"
+    >
+      Logout
+    </UButton>
+  </div>
+  <h2 class="text-2xl font-bold text-black">
+    {{ user?.name }}
+  </h2>
 
-        <p class="text-gray-700">
-          {{ profile?.user.email }}
-        </p>
+  <p class="text-gray-600">
+    {{ user?.email }}
+  </p>
 
-        <p class="text-gray-600 mt-2">
-          {{ profile?.bio || 'No bio available' }}
-        </p>
-      </div>
+  <p class="text-gray-600">
+    {{ companyExtra?.bio || 'No bio' }}
+  </p>
 
-      <div class="flex gap-x-3">
-        <UButton
-          color="primary"
-          class="rounded-full w-fit"
-          @click="showEdit = true"
+  <UModal
+    v-model:open="showQrModal"
+    class="bg-white text-black mx-auto"
+  >
+    <template #title>
+      <p class="text-black">
+        Share Profile
+      </p>
+    </template>
+    <template #body>
+      <img
+        v-if="qrData?.qrCode"
+        :src="qrData.qrCode"
+        class="w-48 h-48 mx-auto"
+      >
+      <div class="text-center">
+        <button
+          v-if="qrData?.profileUrl"
+          class="text-primary underline mx-auto text-sm"
+          @click="copyProfileUrl"
         >
-          Edit Profile
+          {{ qrData.profileUrl }}
+        </button>
+      </div>
+    </template>
+  </UModal>
+  <UModal
+    v-model:open="showLogoutConfirm"
+    class="bg-white text-black"
+  >
+    <template #title>
+      <p class="text-black font-semibold">
+        Logout Confirmation
+      </p>
+    </template>
+
+    <template #body>
+      Are you sure you want to log out?
+    </template>
+
+    <template #footer>
+      <div class="flex w-full text-white justify-end gap-2">
+        <UButton @click="showLogoutConfirm = false">
+          Cancel
         </UButton>
         <UButton
-          class="rounded-full bg-red-500 hover:bg-red-700 hover:cursor-pointer w-fit"
-          @click="showLogoutConfirm = true"
+          color="error"
+          @click="confirmLogout"
         >
           Logout
         </UButton>
       </div>
-    </div>
+    </template>
+  </UModal>
 
-    <UModal
-      v-model:open="showLogoutConfirm"
-      class="bg-white text-black"
-      :ui="{ footer: 'justify-end' }"
-    >
-      <template #title>
-        <p class="text-black font-semibold">
-          Logout Confirmation
-        </p>
-      </template>
-      <template #body>
-        <p>Are you sure you want to log out?</p>
-      </template>
-      <template #footer>
-        <div class="flex gap-2">
-          <UButton
-            variant="ghost"
-            @click="showLogoutConfirm = false"
-          >
-            Cancel
-          </UButton>
-          <UButton
-            class="bg-red-500 hover:bg-red-600 hover:text-white"
-            @click="confirmLogout"
-          >
-            Logout
-          </UButton>
-        </div>
-      </template>
-    </UModal>
-
-    <UpdateCompanyProfileInformation
-      v-model="showEdit"
-      :profile="profile"
-      @updated="refresh()"
-    />
-  </div>
+  <UpdateCompanyProfileInformation
+    v-model="showEdit"
+    :profile="props.profile"
+    @updated="emit('updated')"
+  />
 </template>

@@ -6,7 +6,7 @@ import ProfileAchievement from '../achievement/ProfileAchievement.vue'
 import ProfileBadges from '../ProfileBadges.vue'
 import Evaluate from './Evaluate.vue'
 
-const { skills, projects, certificates, achievements, badges, isOwner, refresh, isLoading } = useProfile()
+const { skills, projects, certificates, achievements, badges, isOwner, refresh, isLoading, userId } = useProfile()
 
 const onChanged = async () => {
   await refresh()
@@ -59,6 +59,7 @@ const onDeleted = async () => {
     </div>
     <div class="sm:w-sm w-full my-3">
       <Evaluate
+        :student-id="userId"
         :is-owner="isOwner"
       />
     </div>

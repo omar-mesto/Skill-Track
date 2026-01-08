@@ -13,22 +13,28 @@ const emit = defineEmits(['close'])
 
 const linksByRole = {
   student: [
+    { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
     { name: 'Questuin', icon: 'i-heroicons-home', path: '/Questions' },
     { name: 'Tasks', icon: 'i-heroicons-clipboard-document', path: '/tasks' },
     { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/student' },
     { name: 'Community', icon: 'i-heroicons-users', path: '/recommendations' },
-    { name: 'LeaderBoard', icon: 'i-heroicons-trophy', path: '/LeaderBoard/student' },
+    { name: 'LeaderBoard', icon: 'i-heroicons-trophy', path: '/LeaderBoard' },
   ],
   professor: [
+    { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
     { name: 'Questuin', icon: 'i-heroicons-home', path: '/Questions' },
     { name: 'Community', icon: 'i-heroicons-users', path: '/recommendations' },
     { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/professor' },
-    { name: 'LeaderBoard', icon: 'i-heroicons-trophy', path: '/LeaderBoard' },
+    { name: 'LeaderBoard', icon: 'i-heroicons-trophy', path: '/LeaderBoard/professor' },
+  ],
+  company: [
+    { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
+    { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/professor' },
   ],
 }
 
 const links = computed(() => {
-  return linksByRole[storage.role as 'student' | 'professor'] || []
+  return linksByRole[storage.role as 'student' | 'professor' | 'company'] || []
 })
 </script>
 

@@ -160,12 +160,23 @@ watch(
             Certificates
           </h3>
 
-          <p
-            v-if="!skillData.linkedCertificates.length"
-            class="text-sm text-gray-400 italic"
+          <div
+            v-if="skillData.linkedCertificates.length"
+            class="space-y-3"
           >
-            No certificates linked.
-          </p>
+            <div
+              v-for="certificate in skillData.linkedCertificates"
+              :key="certificate._id"
+              class="border rounded-lg p-3 bg-gray-50"
+            >
+              <p class="font-medium text-black">
+                {{ certificate.name }}
+              </p>
+              <p class="text-sm text-gray-600">
+                {{ certificate.description }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </template>

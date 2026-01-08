@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import type { companyProfileResponse } from '@@/models/profileInformationModel'
 import { useUpdateCompanyProfile } from '@@/queries/Profile/company/information'
+import type { companyProfileResponse } from '~/models/profileInformationModel'
 
 const props = defineProps<{
   modelValue: boolean
@@ -16,8 +16,9 @@ const localOpen = computed({
 })
 
 const form = ref({
-  companyName: '',
+  name: '',
   bio: '',
+  email: '',
 })
 
 const newAvatar = ref<File | null>(null)
@@ -25,11 +26,11 @@ const newCover = ref<File | null>(null)
 
 watch(
   () => props.profile,
-  p => {
-    if (p) {
-      form.value.companyName = p.companyName
-      form.value.bio = p.bio || ''
-    }
+  (p) => {
+    if (!p) return
+
+    form.value.name = p.profile?.user?.name
+    form.value.bio = p.companyExtra?.bio ?? ''
   },
   { immediate: true },
 )
@@ -51,18 +52,20 @@ const update = async () => {
   if (!props.profile) return
 
   const fd = new FormData()
-  fd.append('companyName', form.value.companyName)
+  fd.append('name', form.value.name)
   fd.append('bio', form.value.bio)
 
   if (newAvatar.value) fd.append('avatar', newAvatar.value)
   if (newCover.value) fd.append('coverImage', newCover.value)
 
   isSaving.value = true
-  const { status, execute } = await useUpdateCompanyProfile(fd)
+
+  const { status, execute } = useUpdateCompanyProfile(fd)
   await execute()
 
   if (status.value === 'success') {
-    toast.add({ description: 'Company Profile Updated', color: 'success', class: 'text-black bg-white' })
+    toast.add({ description: 'Comapny Profile Updated', color: 'success', class: 'text-black bg-white' })
+
     emit('updated')
     emit('update:modelValue', false)
   }
@@ -83,7 +86,7 @@ const update = async () => {
   >
     <template #title>
       <h2 class="text-xl font-bold text-black">
-        Edit Company Profile
+        Edit Comany Profile
       </h2>
     </template>
 
@@ -93,12 +96,13 @@ const update = async () => {
         :state="form"
         @submit="update"
       >
-        <UFormField label="Company Name">
+        <UFormField label="Name">
           <UInput
-            v-model="form.companyName"
+            v-model="form.name"
             class="rounded-lg bg-white text-black block"
             size="xl"
             variant="subtle"
+            disabled
           />
         </UFormField>
 

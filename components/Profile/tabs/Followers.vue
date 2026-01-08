@@ -30,10 +30,10 @@ function goToProfile(user: FollowUser | string) {
     router.push(`/profile/student/${userId}`)
   }
   else if (role === 'professor') {
-    router.push(`/profile/professor?id=${userId}`)
+    router.push(`/profile/professor/${userId}`)
   }
   else if (role === 'company') {
-    router.push(`/profile/company?id=${userId}`)
+    router.push(`/profile/company/${userId}`)
   }
 }
 

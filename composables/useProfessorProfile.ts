@@ -8,9 +8,13 @@ export function useProfessorProfile(userId?: string) {
   const store = useGlobalStore()
   const route = useRoute()
 
-  const resolvedUserId = computed(() =>
-    userId ?? (route.params.id as string) ?? store.id,
-  )
+  const resolvedUserId = computed(() => {
+    if (userId) return userId
+    if (route.params.id) return route.params.id as string
+    if (route.query.id) return route.query.id as string
+
+    return store.id
+  })
 
   const profile = ref<ProfessorProfileData | null>(null)
   const imageVersion = ref(Date.now())
@@ -22,7 +26,6 @@ export function useProfessorProfile(userId?: string) {
     (v) => {
       if (!v?.data) return
 
-      // ✅ هنا التصحيح المهم
       if (v.data.profile?.user?.role === 'professor') {
         profile.value = v.data as ProfessorProfileData
         imageVersion.value = Date.now()

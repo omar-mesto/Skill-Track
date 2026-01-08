@@ -45,7 +45,7 @@ const submit = async () => {
       await useLinkSkill(
         form.value.skillsIds[0],
         achievement._id,
-        'project',
+        'achievement',
         form.value.skillsIds,
       )
     }
