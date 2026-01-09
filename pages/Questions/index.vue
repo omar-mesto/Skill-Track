@@ -33,8 +33,10 @@ const sidebarOpen = ref(false)
           color="info"
           @click="sidebarOpen = true"
         />
-        <span class="ml-4 font-bold text-slate-900 text-lg">My Questions</span>
       </header>
+      <p class="m-4 text-primary font-bold text-2xl">
+        Questions
+      </p>
 
       <div class="p-4 md:p-8">
         <QuestionsList />
@@ -44,17 +46,4 @@ const sidebarOpen = ref(false)
 </template>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
-}
 </style>

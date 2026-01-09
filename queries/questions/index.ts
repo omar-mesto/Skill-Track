@@ -1,5 +1,6 @@
 import { useAPI } from '@@/services/baseApi'
 import type { CreateQuestionResponse, GetQuestionsResponse, GetQuestionDetailResponse, SimpleResponse, ReactionType } from '~/models/questionModel'
+import type { SuggestedSolutionsResponse } from '~/models/recommendationModel'
 
 export const useCreateQuestion = (payload: FormData) => {
   return useAPI<CreateQuestionResponse>({
@@ -42,7 +43,7 @@ export const useDeleteQuestion = (id: string) => {
   })
 }
 
-export const useAddComment = (targetType: 'question', targetId: string, payload: { content: string; parentCommentId: string | null }) => {
+export const useAddComment = (targetType: string, targetId: string, payload: { content: string; parentCommentId: string | null }) => {
   return useAPI<SimpleResponse>({
     url: `/comments/add/${targetType}/${targetId}`,
     type: 'POST',
@@ -82,5 +83,13 @@ export const useDeleteReaction = (targetType: 'question' | 'comment', targetId: 
     url: `/reactions/delete/${targetType}/${targetId}`,
     type: 'DELETE',
     queryKey: `reaction-del-${targetType}-${targetId}`,
+  })
+}
+
+export const useGetSuggestedSolutions = (questionId: string) => {
+  return useAPI<SuggestedSolutionsResponse>({
+    url: `/question/suggested-solutions/${questionId}`,
+    type: 'GET',
+    queryKey: `suggested-solutions-${questionId}`,
   })
 }

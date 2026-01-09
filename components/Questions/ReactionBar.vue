@@ -1,90 +1,89 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAddReaction, useDeleteReaction } from '@@/queries/questions/index'
+import { ref, reactive } from 'vue'
+import { useAddReaction, useDeleteReaction } from '@@/queries/questions'
 import type { ReactionType } from '~/models/questionModel'
 
 const props = defineProps<{
   targetType: 'question' | 'comment'
   targetId: string
+  reactions: Partial<Record<ReactionType, number>>
+  myReaction?: ReactionType | null
 }>()
 
-const active = ref(false)
-const activeType = ref<ReactionType>('like')
+const localReactions = reactive<Record<ReactionType, number>>({
+  like: props.reactions?.like || 0,
+  loved: props.reactions?.loved || 0,
+  applause: props.reactions?.applause || 0,
+  wise: props.reactions?.wise || 0,
+  support: props.reactions?.support || 0,
+  opps: props.reactions?.opps || 0,
+})
 
-const floating = ref<{ id: number; emoji: string }[]>([])
-let seq = 0
+const activeReaction = ref<ReactionType | null>(props.myReaction ?? null)
+const loading = ref(false)
 
 const emojis: Record<ReactionType, string> = {
-  wise: '🧠',
-  loved: '❤️',
-  support: '🤝',
-  applause: '👏',
   like: '👍',
+  loved: '❤️',
+  applause: '👏',
+  wise: '🧠',
+  support: '🤝',
   opps: '😅',
 }
 
 const react = async (type: ReactionType) => {
-  activeType.value = type
+  if (loading.value) return
+  loading.value = true
 
-  const id = ++seq
-  floating.value.push({ id, emoji: emojis[type] })
-  setTimeout(() => {
-    floating.value = floating.value.filter(x => x.id !== id)
-  }, 900)
+  const previous = activeReaction.value
 
-  if (!active.value) {
+  try {
+    if (previous === type) {
+      localReactions[type]--
+      activeReaction.value = null
+
+      const { execute } = useDeleteReaction(props.targetType, props.targetId)
+      await execute()
+
+      return
+    }
+
+    if (previous) {
+      localReactions[previous]--
+    }
+
+    localReactions[type]++
+    activeReaction.value = type
+
     const { execute } = useAddReaction(props.targetType, props.targetId, type)
     await execute()
-    active.value = true
-  } else {
-    const { execute } = useDeleteReaction(props.targetType, props.targetId)
-    await execute()
-    active.value = false
+  } catch (e) {
+    if (previous) localReactions[previous]++
+    if (activeReaction.value) localReactions[activeReaction.value]--
+    activeReaction.value = previous
+  } finally {
+    loading.value = false
   }
 }
 </script>
 
 <template>
-  <div class="relative flex items-center gap-2">
-    <div class="flex flex-wrap gap-2">
-      <button
-        v-for="t in (['wise', 'loved', 'support', 'applause', 'like', 'opps'] as ReactionType[])"
-        :key="t"
-        type="button"
-        class="px-3 py-1 rounded-full text-sm border bg-white hover:bg-gray-50 transition reaction-btn"
-        :class="active && activeType === t ? 'border-primary text-primary' : 'border-gray-200 text-gray-700'"
-        @click="react(t)"
-      >
-        <span class="mr-1">{{ emojis[t] }}</span>
-        {{ t }}
-      </button>
-    </div>
-
-    <div class="absolute left-0 -top-6 pointer-events-none">
-      <span
-        v-for="f in floating"
-        :key="f.id"
-        class="floating-emoji"
-      >
-        {{ f.emoji }}
+  <div class="flex items-center gap-3">
+    <button
+      v-for="t in ['like', 'loved', 'applause', 'wise', 'support', 'opps']"
+      :key="t"
+      class="flex items-center gap-1 px-3 py-1.5 rounded-full border text-sm transition"
+      :class="
+        activeReaction === t
+          ? 'bg-black text-white border-black'
+          : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+      "
+      @click="react(t as ReactionType)"
+    >
+      <span>{{ emojis[t as ReactionType] }}</span>
+      <span class="font-medium">
+        {{ localReactions[t as ReactionType] }}
       </span>
-    </div>
+    </button>
   </div>
 </template>
-
-<style scoped>
-.reaction-btn { transform: translateZ(0); }
-.reaction-btn:active { transform: scale(0.97); }
-
-.floating-emoji{
-  display:inline-block;
-  margin-right:6px;
-  animation: floatUp 0.9s ease-out forwards;
-}
-
-@keyframes floatUp{
-  0%{ opacity:0; transform: translateY(10px) scale(0.9); }
-  20%{ opacity:1; transform: translateY(0px) scale(1.05); }
-  100%{ opacity:0; transform: translateY(-18px) scale(1); }
-}
-</style>

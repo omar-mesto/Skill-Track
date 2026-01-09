@@ -1,146 +1,151 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useGetQuestions, useDeleteQuestion } from '@@/queries/questions/index'
+import { ref, computed } from 'vue'
+import { useDeleteQuestion, useGetQuestions } from '@@/queries/questions'
+import { useGlobalStore } from '@@/stores/global'
 import ReactionBar from '~/components/Questions/ReactionBar.vue'
 
+const store = useGlobalStore()
+
 const page = ref(1)
-const limit = ref(12)
-const router = useRouter()
-
-const loadMoreRef = ref<HTMLElement | null>(null)
-
-onMounted(() => {
-  const observer = new IntersectionObserver(
-    entries => {
-      if (entries[0].isIntersecting && page.value < pagination.value.totalPages) {
-        page.value++
-        refresh()
-      }
-    },
-    { threshold: 1 },
-  )
-
-  if (loadMoreRef.value) observer.observe(loadMoreRef.value)
-})
+const limit = ref(10)
 
 const { data, refresh, status } = useGetQuestions(page.value, limit.value)
 const isLoading = computed(() => status.value === 'pending')
+
 const questions = computed(() => data.value?.data.data ?? [])
-const pagination = computed(() => data.value?.data.pagination ?? null)
 
+const router = useRouter()
 const goDetail = (id: string) => router.push(`/questions/${id}`)
-const getImg = (path: string) => path ? `http://localhost:5000${path}` : null
 
-function goToProfile(user: any) {
-  if (!user) return
-  const userId = typeof user === 'string' ? user : user._id
-  const role = user.role || 'student'
+const showDeleteConfirm = ref(false)
+const selectedQuestionId = ref<string | null>(null)
 
-  if (role === 'student') {
-    router.push(`/profile/student/${userId}`)
-  } else if (role === 'professor') {
-    router.push(`/profile/professor?id=${userId}`)
-  } else if (role === 'company') {
-    router.push(`/profile/company?id=${userId}`)
+const openDeleteModal = (id: string) => {
+  selectedQuestionId.value = id
+  showDeleteConfirm.value = true
+}
+
+const confirmDelete = async () => {
+  if (!selectedQuestionId.value) return
+
+  const { execute, status } = useDeleteQuestion(selectedQuestionId.value)
+  await execute()
+
+  if (status.value === 'success') {
+    showDeleteConfirm.value = false
+    selectedQuestionId.value = null
+    refresh()
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f8fafc] py-12 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto">
-      <div
-        v-if="isLoading"
-        class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6"
-      >
-        <div
-          v-for="i in 6"
-          :key="i"
-          class="h-64 bg-white animate-pulse border border-slate-100"
+  <div class="space-y-8">
+    <div
+      v-for="q in questions"
+      :key="q._id"
+      class="bg-white max-w-3xl mx-auto border rounded-2xl shadow-sm overflow-hidden"
+    >
+      <div class="p-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <UAvatar
+            :src="q.authorId?.avatar ? `http://localhost:5000/${q.authorId.avatar}` : '/StudentLogin.png'"
+            size="md"
+          />
+          <div>
+            <p class="font-semibold text-gray-900">
+              {{ q.authorId?.email }}
+            </p>
+            <p class="text-xs text-gray-500">
+              {{ new Date(q.createdAt).toLocaleDateString() }}
+            </p>
+          </div>
+        </div>
+
+        <UButton
+          v-if="q.authorId?._id === store.id"
+          icon="i-heroicons-trash"
+          color="error"
+          variant="ghost"
+          class="rounded-full"
+          @click="openDeleteModal(q._id)"
         />
       </div>
 
       <div
-        v-else
-        class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6"
+        v-if="q.imageUrl"
+        class="w-full h-64 bg-gray-100 cursor-pointer overflow-hidden"
+        @click="goDetail(q._id)"
       >
-        <div
-          v-for="q in questions"
-          :key="q._id"
-          class="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+        <img
+          :src="`http://localhost:5000${q.imageUrl}`"
+          class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
         >
-          <div
-            v-if="q.imageUrl"
-            class="relative overflow-hidden cursor-pointer"
-            @click="goDetail(q._id)"
-          >
-            <img
-              :src="getImg(q.imageUrl)"
-              class="w-full max-h-72 object-cover transition-transform duration-700 group-hover:scale-110"
-            >
-            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-end p-4">
-              <span class="text-white text-xs bg-white/20 px-3 py-1 rounded-full">View</span>
-            </div>
-          </div>
-
-          <div class="p-6 space-y-4">
-            <div
-              class="flex items-center gap-3 cursor-pointer"
-              @click="goToProfile(q.authorId)"
-            >
-              <UAvatar
-                :src="getImg(q.authorId?.avatar)"
-                size="md"
-              />
-              <div>
-                <p class="font-bold text-slate-900">
-                  {{ q.authorId?.name }}
-                </p>
-                <p class="text-xs text-slate-500">
-                  {{ q.authorRole }}
-                </p>
-              </div>
-            </div>
-
-            <h3
-              class="text-lg font-extrabold text-slate-900 group-hover:text-primary transition cursor-pointer"
-              @click="goDetail(q._id)"
-            >
-              {{ q.title }}
-            </h3>
-
-            <p class="text-sm text-slate-600 line-clamp-2">
-              {{ q.content }}
-            </p>
-
-            <div class="pt-4 border-t flex justify-between items-center">
-              <ReactionBar
-                target-type="question"
-                :target-id="q._id"
-              />
-              <span class="text-xs text-slate-400">{{ q.counters?.comments }} comments</span>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div
-        ref="loadMoreRef"
-        class="h-10"
-      />
+      <div class="p-4 space-y-3">
+        <h3
+          class="font-bold text-lg text-gray-900 cursor-pointer hover:underline"
+          @click="goDetail(q._id)"
+        >
+          {{ q.title }}
+        </h3>
+
+        <p class="text-gray-700 text-sm line-clamp-3">
+          {{ q.content }}
+        </p>
+
+        <div class="flex justify-between items-center pt-3 border-t">
+          <ReactionBar
+            target-type="question"
+            :target-id="q._id"
+            :reactions="q.reactions"
+            :my-reaction="q.myReaction"
+          />
+
+          <UButton
+            icon="i-heroicons-chat-bubble-left"
+            variant="ghost"
+            color="info"
+            @click="goDetail(q._id)"
+          >
+            {{ q.counters?.comments || 0 }}
+          </UButton>
+        </div>
+      </div>
     </div>
+    <UModal
+      v-model:open="showDeleteConfirm"
+      class="bg-white text-black"
+      :ui="{ footer: 'justify-end' }"
+    >
+      <template #title>
+        <p class="font-semibold text-black">
+          Delete Question
+        </p>
+      </template>
+
+      <template #body>
+        <p>Are you sure you want to delete the question?</p>
+      </template>
+
+      <template #footer>
+        <div class="flex gap-2">
+          <UButton
+            variant="ghost"
+            @click="showDeleteConfirm = false"
+          >
+            Cancel
+          </UButton>
+
+          <UButton
+            class="bg-red-500 hover:bg-red-600 hover:text-white"
+            @click="confirmDelete"
+          >
+            Delete
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
-
-<style scoped>
-.columns-1 { column-count: 1; }
-@media (min-width: 768px) { .columns-2 { column-count: 2; } }
-@media (min-width: 1024px) { .columns-3 { column-count: 3; } }
-.break-inside-avoid { break-inside: avoid; }
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

@@ -7,6 +7,7 @@ import type { CommentModel } from '~/models/questionModel'
 const props = defineProps<{
   questionId: string
   comments: CommentModel[]
+  targetType: 'question' | 'post'
   canMarkSolution: boolean
   solutionCommentId: string | null
 }>()
@@ -23,7 +24,7 @@ const addReply = async (parentId: string) => {
   const content = (replyText.value[parentId] || '').trim()
   if (!content) return
 
-  const { execute } = useAddComment('question', props.questionId, { content, parentCommentId: parentId })
+  const { execute } = useAddComment(props.targetType, props.questionId, { content, parentCommentId: parentId })
   await execute()
 
   replyText.value[parentId] = ''
@@ -87,8 +88,20 @@ const markSolution = async (commentId: string) => {
         <div class="flex justify-between items-start gap-3">
           <div class="w-full">
             <div class="flex items-center gap-2">
-              <span class="font-semibold text-black">User</span>
-              <span class="text-xs text-gray-500">{{ c.authorId.role }}</span>
+              <div class="flex items-center gap-3">
+                <UAvatar
+                  :src="c.authorId?.avatar ? `http://localhost:5000/${c.authorId.avatar}` : '/StudentLogin.png'"
+                  size="lg"
+                />
+                <div>
+                  <p class="font-bold text-gray-900">
+                    {{ c.authorId?.name }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ c.authorId?.email }} • {{ new Date(c.createdAt).toLocaleDateString() }}
+                  </p>
+                </div>
+              </div>
 
               <span
                 v-if="solutionCommentId === c._id || c.acceptedBy?.author || c.acceptedBy?.professor"
@@ -126,7 +139,7 @@ const markSolution = async (commentId: string) => {
               </UButton>
 
               <UButton
-                v-if="canMarkSolution"
+                v-if="targetType === 'question' && canMarkSolution"
                 color="success"
                 variant="ghost"
                 class="rounded-full"
@@ -165,9 +178,20 @@ const markSolution = async (commentId: string) => {
                 class="p-3 bg-white border rounded-xl"
               >
                 <div class="flex items-center gap-2">
-                  <span class="font-semibold text-black">User</span>
-                  <span class="text-xs text-gray-500">{{ ch.authorId.role }}</span>
-
+                  <div class="flex items-center gap-3">
+                    <UAvatar
+                      :src="ch.authorId?.avatar ? `http://localhost:5000/${ch.authorId.avatar}` : '/StudentLogin.png'"
+                      size="lg"
+                    />
+                    <div>
+                      <p class="font-bold text-gray-900">
+                        {{ ch.authorId?.name }}
+                      </p>
+                      <p class="text-xs text-gray-500">
+                        {{ ch.authorId?.email }} • {{ new Date(ch.createdAt).toLocaleDateString() }}
+                      </p>
+                    </div>
+                  </div>
                   <span
                     v-if="solutionCommentId === ch._id || ch.acceptedBy?.author || ch.acceptedBy?.professor"
                     class="ml-2 text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 border border-green-200"
