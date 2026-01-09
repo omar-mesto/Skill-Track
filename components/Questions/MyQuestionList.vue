@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useGetMyQuestions, useDeleteQuestion } from '@@/queries/questions'
 import { useGlobalStore } from '@@/stores/global'
 import ReactionBar from '~/components/Questions/ReactionBar.vue'
+import CreateQuestionModal from './CreateQuestionModal.vue'
 
 const store = useGlobalStore()
 const openCreate = ref(false)
@@ -39,14 +40,16 @@ const confirmDelete = async () => {
 
 <template>
   <div class="space-y-8 my-2">
-    <UButton
-      color="primary"
-      icon="i-heroicons-plus-circle"
-      class="rounded-full px-6"
-      @click="openCreate = true"
-    >
-      Ask Question
-    </UButton>
+    <div class="flex justify-end">
+      <UButton
+        color="primary"
+        icon="i-heroicons-plus-circle"
+        class="rounded-full px-6"
+        @click="openCreate = true"
+      >
+        Ask Question
+      </UButton>
+    </div>
     <div
       v-if="isLoading"
       class="space-y-8"
