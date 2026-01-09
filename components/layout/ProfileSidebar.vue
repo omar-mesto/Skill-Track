@@ -29,7 +29,7 @@ const linksByRole = {
   ],
   company: [
     { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
-    { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/professor' },
+    { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/company' },
   ],
 }
 

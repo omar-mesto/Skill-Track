@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+import CompanyTask from '../CompanyTask.vue'
 import Posts from '@/components/Profile/tabs/Posts.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 
@@ -13,7 +14,7 @@ const currentUser = computed(() => ({
 
 const tabs = [
   { name: 'Posts', component: Posts },
-  { name: 'Tasks', component: Posts },
+  { name: 'Tasks', component: CompanyTask },
   { name: 'Follow', component: Followers },
 ]
 
