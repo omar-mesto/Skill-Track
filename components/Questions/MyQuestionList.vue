@@ -2,8 +2,8 @@
 import { computed, ref } from 'vue'
 import { useGetMyQuestions, useDeleteQuestion } from '@@/queries/questions'
 import { useGlobalStore } from '@@/stores/global'
-import ReactionBar from '~/components/Questions/ReactionBar.vue'
 import CreateQuestionModal from './CreateQuestionModal.vue'
+import ReactionBar from '~/components/Questions/ReactionBar.vue'
 
 const store = useGlobalStore()
 const openCreate = ref(false)

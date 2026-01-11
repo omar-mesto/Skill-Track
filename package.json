@@ -21,6 +21,7 @@
         "@codemirror/view": "^6.39.9",
         "@nuxt/ui-pro": "^3.0.0",
         "@pinia/nuxt": "^0.10.1",
+        "firebase": "^12.7.0",
         "nuxt": "^3.16.0",
         "pinia": "^3.0.1",
         "pinia-plugin-persistedstate": "^4.2.0",

@@ -44,6 +44,19 @@ const loginUser = async () => {
   isLoading.value = false
   userForm.value.email = ''
   userForm.value.password = ''
+
+  const { init } = useNotifications()
+    onMounted(() => {
+      init()
+    })
+  }
+
+const enableSound = () => {
+  const audio = new Audio('/sounds/notification.mp3')
+  audio.play().then(() => {
+    audio.pause()
+    audio.currentTime = 0
+  }).catch(() => {})
 }
 </script>
 
@@ -97,6 +110,7 @@ const loginUser = async () => {
                 type="submit"
                 block
                 class="w-full sm:mt-3 disabled:bg-primary text-white bg-primary hover:bg-blue-950 rounded-full h-12 py-2.5 font-bold text-center"
+                @click="enableSound"
               >
                 <span class="font-bold text-lg">Sign in</span>
               </UButton>

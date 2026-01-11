@@ -7,8 +7,13 @@ import Tasks from '@/components/Profile/tabs/Tasks.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 import Question from '@/components/Profile/tabs/Question.vue'
 
-const { profile, isOwner } = useProfile()
+defineProps<{
+  userId?: string
+  readonly?: boolean
+  isOwner?: boolean
+}>()
 
+const { profile } = useProfile()
 const tabs = [
   { name: 'Profile', component: markRaw(Portfolio) },
   { name: 'Posts', component: markRaw(Posts) },

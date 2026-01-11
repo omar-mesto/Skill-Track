@@ -86,7 +86,20 @@ const registerUser = async () => {
     })
   }
 
+  const { init } = useNotifications()
+    onMounted(() => {
+      init()
+    })
+
   isLoading.value = false
+}
+
+const enableSound = () => {
+  const audio = new Audio('/sounds/notification.mp3')
+  audio.play().then(() => {
+    audio.pause()
+    audio.currentTime = 0
+  }).catch(() => {})
 }
 </script>
 
@@ -219,6 +232,7 @@ const registerUser = async () => {
                 type="submit"
                 block
                 class="w-full mt-5 bg-primary text-white hover:bg-blue-950 rounded-full h-12 font-bold"
+                @click="enableSound"
               >
                 Register
               </UButton>
