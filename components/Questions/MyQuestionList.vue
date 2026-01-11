@@ -36,6 +36,10 @@ const confirmDelete = async () => {
     refresh()
   }
 }
+
+const BASE_URL = 'https://skill-track-gr0b.onrender.com'
+const resolveImage = (path?: string) =>
+  path ? new URL(path, BASE_URL).href : null
 </script>
 
 <template>
@@ -86,7 +90,7 @@ const confirmDelete = async () => {
         <div class="p-4 flex justify-between items-center">
           <div class="flex items-center gap-3">
             <UAvatar
-              :src="q.authorId?.avatar ? `http://localhost:5000/${q.authorId.avatar}` : '/StudentLogin.png'"
+              :src="q.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${q.authorId.avatar}` : '/StudentLogin.png'"
               size="md"
             />
             <div>
@@ -115,7 +119,7 @@ const confirmDelete = async () => {
           @click="goDetail(q._id)"
         >
           <img
-            :src="`http://localhost:5000${q.imageUrl}`"
+            :src="resolveImage(q.imageUrl)"
             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           >
         </div>

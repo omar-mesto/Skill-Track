@@ -1,5 +1,12 @@
 import { useAPI } from '@@/services/baseApi'
-import type { CreateQuestionResponse, GetQuestionsResponse, GetQuestionDetailResponse, SimpleResponse, ReactionType } from '~/models/questionModel'
+import type {
+  CreateQuestionResponse,
+  GetQuestionsResponse,
+  GetQuestionDetailResponse,
+  SimpleResponse,
+  ReactionType,
+} from '~/models/questionModel'
+import type { ReactionCountResponse, ReactionListResponse } from '~/models/reactionModel'
 import type { SuggestedSolutionsResponse } from '~/models/recommendationModel'
 
 export const useCreateQuestion = (payload: FormData) => {
@@ -69,7 +76,7 @@ export const useMarkSolution = (commentId: string, checked: boolean) => {
   })
 }
 
-export const useAddReaction = (targetType: 'question' | 'comment', targetId: string, type: ReactionType) => {
+export const useAddReaction = (targetType: 'question' | 'comment' | 'post', targetId: string, type: ReactionType) => {
   return useAPI<SimpleResponse>({
     url: `/reactions/add/${targetType}/${targetId}`,
     type: 'POST',
@@ -78,11 +85,27 @@ export const useAddReaction = (targetType: 'question' | 'comment', targetId: str
   })
 }
 
-export const useDeleteReaction = (targetType: 'question' | 'comment', targetId: string) => {
+export const useDeleteReaction = (targetType: 'question' | 'comment' | 'post', targetId: string) => {
   return useAPI<SimpleResponse>({
     url: `/reactions/delete/${targetType}/${targetId}`,
     type: 'DELETE',
     queryKey: `reaction-del-${targetType}-${targetId}`,
+  })
+}
+
+export const useGetReactionsList = (targetType: 'question' | 'comment' | 'post', targetId: string) => {
+  return useAPI<ReactionListResponse>({
+    url: `/reactions/list/${targetType}/${targetId}`,
+    type: 'GET',
+    queryKey: `reactions-list-${targetType}-${targetId}`,
+  })
+}
+
+export const useGetReactionsCount = (targetType: 'question' | 'comment' | 'post', targetId: string) => {
+  return useAPI<ReactionCountResponse>({
+    url: `/reactions/count/${targetType}/${targetId}`,
+    type: 'GET',
+    queryKey: `reactions-count-${targetType}-${targetId}`,
   })
 }
 

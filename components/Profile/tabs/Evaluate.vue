@@ -179,7 +179,7 @@ const getAiEvaluation = async () => {
           :ui="{ name: 'text-black' }"
           :avatar="{
             src: selectedProfessorEvaluation.professor.avatar
-              ? 'http://localhost:5000/' + selectedProfessorEvaluation.professor.avatar
+              ? 'https://skill-track-gr0b.onrender.com/' + selectedProfessorEvaluation.professor.avatar
               : '/StudentLogin.png',
           }"
           size="xl"

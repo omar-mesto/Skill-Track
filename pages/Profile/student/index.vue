@@ -37,7 +37,9 @@ const onProfileUpdated = async () => {
           @open-sidebar="sidebarOpen = true"
           @updated="onProfileUpdated"
         />
-        <ProfileTabs />
+        <ProfileTabs
+          :is-owner="true"
+        />
       </div>
     </main>
   </div>

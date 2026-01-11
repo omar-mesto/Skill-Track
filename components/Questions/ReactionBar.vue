@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useAddReaction, useDeleteReaction } from '@@/queries/questions'
+import { ref, reactive, watch, computed } from 'vue'
+import { useGlobalStore } from '@@/stores/global'
+import {
+  useAddReaction,
+  useDeleteReaction,
+  useGetReactionsList,
+  useGetReactionsCount,
+} from '@@/queries/questions'
 import type { ReactionType } from '~/models/questionModel'
+import type { ReactionModel } from '~/models/reactionModel'
 
 const props = defineProps<{
-  targetType: 'question' | 'comment'
+  targetType: 'question' | 'comment' | 'post'
   targetId: string
-  reactions: Partial<Record<ReactionType, number>>
+  reactions?: Partial<Record<ReactionType, number>>
   myReaction?: ReactionType | null
 }>()
+
+const store = useGlobalStore()
 
 const localReactions = reactive<Record<ReactionType, number>>({
   like: props.reactions?.like || 0,
@@ -21,6 +30,7 @@ const localReactions = reactive<Record<ReactionType, number>>({
 
 const activeReaction = ref<ReactionType | null>(props.myReaction ?? null)
 const loading = ref(false)
+const fetchedOnce = ref(false)
 
 const emojis: Record<ReactionType, string> = {
   like: '👍',
@@ -31,6 +41,59 @@ const emojis: Record<ReactionType, string> = {
   opps: '😅',
 }
 
+const currentUserId = computed(() => store.id)
+
+const resetCounts = () => {
+  localReactions.like = 0
+  localReactions.loved = 0
+  localReactions.applause = 0
+  localReactions.wise = 0
+  localReactions.support = 0
+  localReactions.opps = 0
+}
+
+const normalizeUserId = (userId: ReactionModel['userId']) => {
+  if (!userId) return ''
+  if (typeof userId === 'string') return userId
+
+  return userId._id || ''
+}
+const fetchReactions = async () => {
+  const { data, execute } = useGetReactionsList(props.targetType, props.targetId)
+
+  await execute()
+
+  const items = data.value?.data || []
+
+  resetCounts()
+
+  let my: ReactionType | null = null
+
+  for (const r of items) {
+    if (r?.type) {
+      localReactions[r.type] = (localReactions[r.type] || 0) + 1
+    }
+
+    const uid =
+      typeof r.userId === 'object' ? r.userId._id : r.userId
+
+    if (uid === currentUserId.value) {
+      my = r.type
+    }
+  }
+
+  activeReaction.value = my
+}
+
+watch(
+  () => [props.targetType, props.targetId],
+  () => {
+    fetchedOnce.value = false
+    fetchReactions()
+  },
+  { immediate: true },
+)
+
 const react = async (type: ReactionType) => {
   if (loading.value) return
   loading.value = true
@@ -39,7 +102,7 @@ const react = async (type: ReactionType) => {
 
   try {
     if (previous === type) {
-      localReactions[type]--
+      localReactions[type] = Math.max(0, localReactions[type] - 1)
       activeReaction.value = null
 
       const { execute } = useDeleteReaction(props.targetType, props.targetId)
@@ -49,7 +112,7 @@ const react = async (type: ReactionType) => {
     }
 
     if (previous) {
-      localReactions[previous]--
+      localReactions[previous] = Math.max(0, localReactions[previous] - 1)
     }
 
     localReactions[type]++
@@ -59,7 +122,9 @@ const react = async (type: ReactionType) => {
     await execute()
   } catch (e) {
     if (previous) localReactions[previous]++
-    if (activeReaction.value) localReactions[activeReaction.value]--
+    if (activeReaction.value) {
+      localReactions[activeReaction.value] = Math.max(0, localReactions[activeReaction.value] - 1)
+    }
     activeReaction.value = previous
   } finally {
     loading.value = false

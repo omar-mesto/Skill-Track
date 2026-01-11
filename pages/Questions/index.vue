@@ -23,6 +23,12 @@ const sidebarOpen = ref(false)
         class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
         @click="sidebarOpen = false"
       />
+      <div class="absolute left-0 top-0 w-72 h-full bg-white shadow-xl">
+        <ProfileSidebar
+          :open="sidebarOpen"
+          @close="sidebarOpen = false"
+        />
+      </div>
     </div>
 
     <main class="flex-1 h-screen overflow-y-auto custom-scrollbar">

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { ProfileResponse } from '@@/models/profileInformationModel'
 
-const BASE = 'http://localhost:5000/'
+const BASE = 'https://skill-track-gr0b.onrender.com/'
 
 const props = defineProps<{
   profile: ProfileResponse['data'] | null

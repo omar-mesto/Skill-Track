@@ -59,7 +59,7 @@ const toggleFollow = async (e: MouseEvent) => {
         :name="user.name"
         :avatar="{
           src: user.avatar
-            ? 'http://localhost:5000/' + user.avatar
+            ? 'https://skill-track-gr0b.onrender.com/' + user.avatar
             : '/StudentLogin.png',
         }"
         size="xl"

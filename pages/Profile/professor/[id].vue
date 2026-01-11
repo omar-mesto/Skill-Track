@@ -21,11 +21,28 @@ const onUpdated = async () => {
 
 <template>
   <div class="flex min-h-screen bg-[#F4F7FB]">
-    <ProfileSidebar
-      v-if="isOwner"
-      :open="sidebarOpen"
-      @close="sidebarOpen = false"
-    />
+    <aside class="hidden lg:block w-72 h-screen sticky top-0 border-r border-slate-100 bg-white">
+      <ProfileSidebar
+        :open="sidebarOpen"
+        @close="sidebarOpen = false"
+      />
+    </aside>
+
+    <div
+      v-if="sidebarOpen"
+      class="lg:hidden fixed inset-0 z-50"
+    >
+      <div
+        class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+        @click="sidebarOpen = false"
+      />
+      <div class="absolute left-0 top-0 w-72 h-full bg-white shadow-xl">
+        <ProfileSidebar
+          :open="sidebarOpen"
+          @close="sidebarOpen = false"
+        />
+      </div>
+    </div>
 
     <main class="flex-1 mb-6">
       <ProfessorProfileHeader

@@ -68,7 +68,7 @@ const getRoleColor = (role: string) => {
             :avatar="{
               src: typeof f.follower === 'object'
                 ? (f.follower.avatar
-                  ? 'http://localhost:5000/' + f.follower.avatar
+                  ? 'https://skill-track-gr0b.onrender.com/' + f.follower.avatar
                   : '/StudentLogin.png')
                 : '/StudentLogin.png',
             }"
@@ -116,7 +116,7 @@ const getRoleColor = (role: string) => {
             :avatar="{
               src: typeof f.following === 'object'
                 ? (f.following.avatar
-                  ? 'http://localhost:5000/' + f.following.avatar
+                  ? 'https://skill-track-gr0b.onrender.com/' + f.following.avatar
                   : '/StudentLogin.png')
                 : '/StudentLogin.png',
             }"

@@ -22,6 +22,11 @@ const handlePageChange = (p: number) => {
   page.value = p
   refresh()
 }
+
+const goProfile = (author: any) => {
+  if (!author?._id || !author?.role) return
+  router.push(`/profile/${author.role}/${author._id}`)
+}
 </script>
 
 <template>
@@ -33,8 +38,25 @@ const handlePageChange = (p: number) => {
       />
     </aside>
 
+    <div
+      v-if="sidebarOpen"
+      class="lg:hidden fixed inset-0 z-50"
+    >
+      <div
+        class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+        @click="sidebarOpen = false"
+      />
+      <div class="absolute left-0 top-0 w-72 h-full bg-white shadow-xl">
+        <ProfileSidebar
+          :open="sidebarOpen"
+          @close="sidebarOpen = false"
+        />
+      </div>
+    </div>
+
     <main class="flex-1 overflow-y-auto">
       <header class="lg:hidden p-4 flex items-center bg-white border-b sticky top-0 z-30">
+        <MobileBackButton />
         <UButton
           icon="i-heroicons-bars-3-bottom-left"
           variant="ghost"
@@ -68,13 +90,20 @@ const handlePageChange = (p: number) => {
           >
             <div class="flex items-center gap-3 m-2">
               <UAvatar
-                :src="p.authorId?.avatar ? `http://localhost:5000/${p.authorId.avatar}` : '/StudentLogin.png'"
+                :src="p.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${p.authorId.avatar}` : '/StudentLogin.png'"
                 size="md"
+                class="cursor-pointer"
+                @click.stop="goProfile(p.authorId)"
               />
+
               <div>
-                <p class="font-semibold text-gray-900">
+                <p
+                  class="font-semibold text-gray-900 cursor-pointer hover:underline"
+                  @click.stop="goProfile(p.authorId)"
+                >
                   {{ p.authorId?.email }}
                 </p>
+
                 <p class="text-xs text-gray-500">
                   {{ new Date(p.createdAt).toLocaleDateString() }}
                 </p>
@@ -87,7 +116,7 @@ const handlePageChange = (p: number) => {
               @click="goDetail(p._id)"
             >
               <img
-                :src="`http://localhost:5000/${p.imageUrl}`"
+                :src="`https://skill-track-gr0b.onrender.com/${p.imageUrl}`"
                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               >
             </div>
@@ -106,7 +135,7 @@ const handlePageChange = (p: number) => {
 
               <div class="flex justify-between items-center pt-3 border-t">
                 <ReactionBar
-                  target-type="question"
+                  target-type="post"
                   :target-id="p._id"
                   :reactions="p.reactions"
                   :my-reaction="p.myReaction"

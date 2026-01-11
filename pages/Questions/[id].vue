@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGlobalStore } from '@@/stores/global'
-import { useGetQuestionDetail, useDeleteQuestion } from '@@/queries/questions'
+import { useGetQuestionDetail, useDeleteQuestion, useGetReactionsList } from '@@/queries/questions'
 import ReactionBar from '@@/components/Questions/ReactionBar.vue'
 import CommentsTree from '~/components/Questions/CommentsTree.vue'
 import ProfileSidebar from '~/components/layout/ProfileSidebar.vue'
+import type { ReactionType } from '~/models/questionModel'
 
 const route = useRoute()
 const router = useRouter()
@@ -15,8 +16,10 @@ const sidebarOpen = ref(false)
 const showDeleteConfirm = ref(false)
 
 const id = computed(() => route.params.id as string)
-
-const { data, refresh, status } = useGetQuestionDetail(id.value)
+const questionId = id.value
+const reactions = ref<Partial<Record<ReactionType, number>>>({})
+const myReaction = ref<ReactionType | null>(null)
+const { data, refresh, status } = useGetQuestionDetail(questionId)
 const isLoading = computed(() => status.value === 'pending')
 
 const q = computed(() => data.value?.data.question ?? null)
@@ -30,6 +33,33 @@ const canMarkSolution = computed(() => {
   return isOwner || isProfessor
 })
 
+const fetchReactions = async () => {
+  const { data, execute } = useGetReactionsList('question', questionId)
+
+  await execute()
+
+  const list = data.value?.data || []
+
+  const counts: Partial<Record<ReactionType, number>> = {}
+  let mine: ReactionType | null = null
+
+  list.forEach((r) => {
+    counts[r.type] = (counts[r.type] || 0) + 1
+
+    if (
+      typeof r.userId === 'object' &&
+      r.userId?._id === store.id
+    ) {
+      mine = r.type
+    }
+  })
+
+  reactions.value = counts
+  myReaction.value = mine
+}
+
+onMounted(fetchReactions)
+
 const confirmDelete = async () => {
   if (!q.value) return
   const { execute, status } = useDeleteQuestion(q.value._id)
@@ -39,6 +69,10 @@ const confirmDelete = async () => {
     router.push('/profile/student')
   }
 }
+
+const BASE_URL = 'https://skill-track-gr0b.onrender.com'
+const resolveImage = (path?: string | undefined) =>
+  path ? new URL(path, BASE_URL).href : null
 </script>
 
 <template>
@@ -99,7 +133,7 @@ const confirmDelete = async () => {
           <div class="p-6 border-b border-gray-50 flex justify-between items-center">
             <div class="flex items-center gap-3">
               <UAvatar
-                :src="q.authorId?.avatar ? `http://localhost:5000/${q.authorId.avatar}` : '/StudentLogin.png'"
+                :src="q.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${q.authorId.avatar}` : '/StudentLogin.png'"
                 size="lg"
               />
               <div>
@@ -124,15 +158,18 @@ const confirmDelete = async () => {
 
             <img
               v-if="q.imageUrl"
-              :src="`http://localhost:5000${q.imageUrl}`"
+              :src="resolveImage(q.imageUrl)"
               class="w-full rounded-xl border bg-gray-50 mb-6"
             >
 
             <div class="flex items-center gap-6 py-4 border-t">
               <ReactionBar
                 target-type="question"
-                :target-id="q._id"
+                :target-id="questionId"
+                :reactions="reactions"
+                :my-reaction="myReaction"
               />
+
               <span class="text-sm text-gray-500">
                 {{ comments.length }} Comments
               </span>
@@ -141,7 +178,7 @@ const confirmDelete = async () => {
 
           <div class="bg-gray-50 p-6 border-t">
             <CommentsTree
-              target-id="q._id"
+              :target-id="q._id"
               target-type="question"
               :comments="comments"
               :can-mark-solution="canMarkSolution"

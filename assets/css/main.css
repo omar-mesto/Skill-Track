@@ -17,3 +17,8 @@
 input,textarea {
     color: black !important;
 }
+
+html, body, #__nuxt {
+  height: 100%;
+  background: #f8fafc;
+}

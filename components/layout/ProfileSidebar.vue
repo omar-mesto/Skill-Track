@@ -14,7 +14,7 @@ const emit = defineEmits(['close'])
 const linksByRole = {
   student: [
     { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
-    { name: 'Questuin', icon: 'i-heroicons-home', path: '/Questions' },
+    { name: 'Question', icon: 'i-heroicons-home', path: '/Questions' },
     { name: 'Tasks', icon: 'i-heroicons-clipboard-document', path: '/tasks' },
     { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/student' },
     { name: 'Community', icon: 'i-heroicons-users', path: '/recommendations' },
@@ -22,7 +22,7 @@ const linksByRole = {
   ],
   professor: [
     { name: 'Posts', icon: 'i-heroicons-pencil-square', path: '/Posts' },
-    { name: 'Questuin', icon: 'i-heroicons-home', path: '/Questions' },
+    { name: 'Question', icon: 'i-heroicons-home', path: '/Questions' },
     { name: 'Community', icon: 'i-heroicons-users', path: '/recommendations' },
     { name: 'Portfolio', icon: 'i-heroicons-briefcase', path: '/profile/professor' },
     { name: 'LeaderBoard', icon: 'i-heroicons-trophy', path: '/LeaderBoard/professor' },

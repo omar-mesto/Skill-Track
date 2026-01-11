@@ -28,6 +28,9 @@ export function useProfile(userId?: string) {
   const achievements = computed(() => data.value?.data.achievements ?? [])
   const badges = computed(() => data.value?.data.badges ?? [])
   const certificates = computed(() => data.value?.data.courseLinks ?? [])
+
+  const posts = computed(() => data.value?.data.posts ?? [])
+  const questions = computed(() => data.value?.data.questions ?? [])
   watch(
     () => data.value,
     v => {
@@ -47,6 +50,8 @@ export function useProfile(userId?: string) {
     projects,
     achievements,
     badges,
+    posts,
+    questions,
     certificates,
     isOwner,
     isLoading,

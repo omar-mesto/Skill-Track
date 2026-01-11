@@ -23,7 +23,7 @@ export function useAPI<T>(options: {
 }
 
 export const api = $fetch.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'https://skill-track-gr0b.onrender.com/api',
     onRequest({ options }) {
         options.headers.set('Accept', 'application/json')
         options.headers.set('Authorization', `Bearer ${useGlobalStore().token}`)

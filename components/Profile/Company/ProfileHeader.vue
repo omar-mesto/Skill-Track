@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['open-sidebar'])
 
-const BASE = 'http://localhost:5000/'
+const BASE = 'https://skill-track-gr0b.onrender.com/'
 
 const hasAvatar = computed(() =>
   !!props.profile?.profile?.user?.avatar,

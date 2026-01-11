@@ -5,11 +5,11 @@ import ReactionBar from './ReactionBar.vue'
 import type { CommentModel } from '~/models/questionModel'
 
 const props = defineProps<{
-  questionId: string
+  targetId: string
+  targetType: 'question' | 'post' | 'comment'
   comments: CommentModel[]
-  targetType: 'question' | 'post'
-  canMarkSolution: boolean
-  solutionCommentId: string | null
+  canMarkSolution?: boolean
+  solutionCommentId?: string | null
 }>()
 
 const emit = defineEmits(['refresh'])
@@ -24,7 +24,7 @@ const addReply = async (parentId: string) => {
   const content = (replyText.value[parentId] || '').trim()
   if (!content) return
 
-  const { execute } = useAddComment(props.targetType, props.questionId, { content, parentCommentId: parentId })
+  const { execute } = useAddComment(props.targetType, props.targetId, { content, parentCommentId: parentId })
   await execute()
 
   replyText.value[parentId] = ''
@@ -33,13 +33,18 @@ const addReply = async (parentId: string) => {
 }
 
 const addRoot = ref('')
+
 const addComment = async () => {
   const content = addRoot.value.trim()
   if (!content) return
 
-  const { execute } = useAddComment('question', props.questionId, { content, parentCommentId: null })
-  await execute()
+  const { execute } = useAddComment(
+    props.targetType,
+    props.targetId,
+    { content, parentCommentId: null },
+  )
 
+  await execute()
   addRoot.value = ''
   emit('refresh')
 }
@@ -90,7 +95,7 @@ const markSolution = async (commentId: string) => {
             <div class="flex items-center gap-2">
               <div class="flex items-center gap-3">
                 <UAvatar
-                  :src="c.authorId?.avatar ? `http://localhost:5000/${c.authorId.avatar}` : '/StudentLogin.png'"
+                  :src="c.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${c.authorId.avatar}` : '/StudentLogin.png'"
                   size="lg"
                 />
                 <div>
@@ -180,7 +185,7 @@ const markSolution = async (commentId: string) => {
                 <div class="flex items-center gap-2">
                   <div class="flex items-center gap-3">
                     <UAvatar
-                      :src="ch.authorId?.avatar ? `http://localhost:5000/${ch.authorId.avatar}` : '/StudentLogin.png'"
+                      :src="ch.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${ch.authorId.avatar}` : '/StudentLogin.png'"
                       size="lg"
                     />
                     <div>
@@ -217,16 +222,6 @@ const markSolution = async (commentId: string) => {
                     @click="deleteComment(ch._id)"
                   >
                     Delete
-                  </UButton>
-
-                  <UButton
-                    v-if="canMarkSolution"
-                    color="success"
-                    variant="ghost"
-                    class="rounded-full"
-                    @click="markSolution(ch._id)"
-                  >
-                    Mark Solution
                   </UButton>
                 </div>
               </div>

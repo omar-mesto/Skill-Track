@@ -15,7 +15,7 @@ const addComment = async () => {
 
   isSending.value = true
 
-  const { execute, status, refresh } = useAddComment(
+  const { execute, status } = useAddComment(
     'post',
     post.value._id,
     { content: newComment.value, parentCommentId: null },
@@ -36,7 +36,7 @@ const sidebarOpen = ref(false)
 
 const id = computed(() => route.params.id as string)
 
-const { data, status } = useGetPostDetail(id.value)
+const { data, status, refresh } = useGetPostDetail(id.value)
 const isLoading = computed(() => status.value === 'pending')
 
 const post = computed(() => data.value?.data?.post ?? null)
@@ -45,15 +45,32 @@ const comments = computed(() => data.value?.data?.comments ?? [])
 
 <template>
   <div class="min-h-screen bg-[#f8fafc] flex">
-    <aside class="hidden lg:block w-72 h-screen sticky top-0 border-r bg-white">
+    <aside class="hidden lg:block w-72 h-screen sticky top-0 border-r border-slate-100 bg-white">
       <ProfileSidebar
         :open="sidebarOpen"
         @close="sidebarOpen = false"
       />
     </aside>
 
+    <div
+      v-if="sidebarOpen"
+      class="lg:hidden fixed inset-0 z-50"
+    >
+      <div
+        class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+        @click="sidebarOpen = false"
+      />
+      <div class="absolute left-0 top-0 w-72 h-full bg-white shadow-xl">
+        <ProfileSidebar
+          :open="sidebarOpen"
+          @close="sidebarOpen = false"
+        />
+      </div>
+    </div>
+
     <main class="flex-1 overflow-y-auto">
       <header class="lg:hidden p-4 flex items-center bg-white border-b sticky top-0 z-30">
+        <MobileBackButton />
         <UButton
           icon="i-heroicons-bars-3-bottom-left"
           variant="ghost"
@@ -80,7 +97,7 @@ const comments = computed(() => data.value?.data?.comments ?? [])
         >
           <div class="flex items-center gap-3 m-2">
             <UAvatar
-              :src="post.authorId?.avatar ? `http://localhost:5000/${post.authorId.avatar}` : '/StudentLogin.png'"
+              :src="post.authorId?.avatar ? `https://skill-track-gr0b.onrender.com/${post.authorId.avatar}` : '/StudentLogin.png'"
               size="md"
             />
             <div>
@@ -104,7 +121,7 @@ const comments = computed(() => data.value?.data?.comments ?? [])
 
             <img
               v-if="post.imageUrl"
-              :src="`http://localhost:5000/${post.imageUrl}`"
+              :src="`https://skill-track-gr0b.onrender.com/${post.imageUrl}`"
               class="w-full rounded-xl border mb-6"
             >
 
@@ -123,10 +140,10 @@ const comments = computed(() => data.value?.data?.comments ?? [])
 
           <div class="bg-gray-50 p-6 border-t">
             <CommentsTree
-              target-id="post._id"
+              :target-id="post._id"
               target-type="post"
               :comments="comments"
-              @refresh="refresh()"
+              @refresh="refresh"
             />
           </div>
         </article>

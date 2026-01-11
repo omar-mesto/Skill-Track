@@ -12,6 +12,12 @@ const limit = ref(10)
 const { data, refresh, status } = useGetQuestions(page.value, limit.value)
 const isLoading = computed(() => status.value === 'pending')
 
+const goProfile = (user: any) => {
+  if (!user?._id || !user?.role) return
+
+  router.push(`/profile/${user.role}/${user._id}`)
+}
+
 const questions = computed(() => data.value?.data.data ?? [])
 
 const router = useRouter()
@@ -37,6 +43,10 @@ const confirmDelete = async () => {
     refresh()
   }
 }
+
+const BASE_URL = 'https://skill-track-gr0b.onrender.com'
+const resolveImage = (path?: string) =>
+  path ? new URL(path, BASE_URL).href : null
 </script>
 
 <template>
@@ -47,9 +57,14 @@ const confirmDelete = async () => {
       class="bg-white max-w-3xl mx-auto border rounded-2xl shadow-sm overflow-hidden"
     >
       <div class="p-4 flex justify-between items-center">
-        <div class="flex items-center gap-3">
+        <div
+          class="flex items-center gap-3 cursor-pointer"
+          @click="goProfile(q.authorId)"
+        >
           <UAvatar
-            :src="q.authorId?.avatar ? `http://localhost:5000/${q.authorId.avatar}` : '/StudentLogin.png'"
+            :src="q.authorId?.avatar
+              ? `https://skill-track-gr0b.onrender.com/${q.authorId.avatar}`
+              : '/StudentLogin.png'"
             size="md"
           />
           <div>
@@ -78,7 +93,7 @@ const confirmDelete = async () => {
         @click="goDetail(q._id)"
       >
         <img
-          :src="`http://localhost:5000${q.imageUrl}`"
+          :src="resolveImage(q.imageUrl)"
           class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
         >
       </div>
@@ -91,9 +106,15 @@ const confirmDelete = async () => {
           {{ q.title }}
         </h3>
 
-        <p class="text-gray-700 text-sm line-clamp-3">
-          {{ q.content }}
-        </p>
+        <div class="flex w-full justify-between">
+          <p class="text-gray-700 text-sm line-clamp-3">
+            {{ q.content }}
+          </p>
+
+          <p class="text-green-500 text-sm line-clamp-3">
+            {{ q.isSolved ? 'Solved' : '' }}
+          </p>
+        </div>
 
         <div class="flex justify-between items-center pt-3 border-t">
           <ReactionBar

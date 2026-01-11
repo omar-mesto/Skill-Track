@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, markRaw } from 'vue'
+import { ref, markRaw, computed } from 'vue'
+import { useGlobalStore } from '@@/stores/global'
 
 import Portfolio from '@/components/Profile/tabs/Portfolio.vue'
 import Posts from '@/components/Profile/tabs/Posts.vue'
@@ -7,13 +8,13 @@ import Tasks from '@/components/Profile/tabs/Tasks.vue'
 import Followers from '@/components/Profile/tabs/Followers.vue'
 import Question from '@/components/Profile/tabs/Question.vue'
 
-defineProps<{
-  userId?: string
-  readonly?: boolean
-  isOwner?: boolean
-}>()
-
+const store = useGlobalStore()
 const { profile } = useProfile()
+
+const isOwner = computed(() => {
+  return profile.value?.user?._id === store.id
+})
+
 const tabs = [
   { name: 'Profile', component: markRaw(Portfolio) },
   { name: 'Posts', component: markRaw(Posts) },
@@ -45,5 +46,7 @@ const activeTab = ref(tabs[0])
     :is="activeTab.component"
     :user-id="profile?.user?._id"
     :is-owner="isOwner"
+    :questions="profile?.questions || []"
+    :posts="profile?.posts || []"
   />
 </template>

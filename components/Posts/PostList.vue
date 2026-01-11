@@ -40,7 +40,7 @@ const router = useRouter()
         class="w-full h-64 overflow-hidden"
       >
         <img
-          :src="`http://localhost:5000/${p.imageUrl}`"
+          :src="`https://skill-track-gr0b.onrender.com/${p.imageUrl}`"
           class="w-full h-full object-cover"
         >
       </div>
@@ -56,7 +56,7 @@ const router = useRouter()
 
         <div class="flex justify-between items-center pt-3 border-t">
           <ReactionBar
-            target-type="question"
+            target-type="post"
             :target-id="p._id"
             :reactions="p.reactions"
             :my-reaction="p.myReaction"

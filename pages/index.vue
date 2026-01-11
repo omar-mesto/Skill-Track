@@ -127,7 +127,7 @@ const opportunities = [
         <div class="flex items-center gap-2">
           <UButton
             color="primary"
-            class="rounded-full px-5"
+            class="rounded-full px-5 text-white"
             @click="showAccountModal = true"
           >
             Get Started
@@ -166,7 +166,7 @@ const opportunities = [
               <div class="mt-8 flex flex-wrap gap-3">
                 <UButton
                   color="primary"
-                  class="rounded-full px-6 h-12"
+                  class="rounded-full px-6 h-12 text-white"
                   @click="showAccountModal = true"
                 >
                   Create an account
