@@ -91,19 +91,19 @@ const submit = async () => {
 
       <template #body>
         <div class="space-y-3">
-          <label>Title</label>
+          <label class="text-black">Title</label>
           <UInput
             v-model="form.title"
             class="w-full"
           />
 
-          <label>Description</label>
+          <label class="text-black">Description</label>
           <UTextarea
             v-model="form.description"
             class="w-full"
           />
 
-          <label>Language</label>
+          <label class="text-black">Language</label>
           <UInput
             v-model="form.language"
             placeholder="javascript / python / ..."
@@ -112,14 +112,14 @@ const submit = async () => {
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label>Start At</label>
+              <label class="text-black">Start At</label>
               <UInput
                 v-model="form.startAt"
                 type="date"
               />
             </div>
             <div>
-              <label>End At</label>
+              <label class="text-black">End At</label>
               <UInput
                 v-model="form.endAt"
                 type="date"
@@ -127,7 +127,7 @@ const submit = async () => {
             </div>
           </div>
 
-          <label>Reference Solution</label>
+          <label class="text-black">Reference Solution</label>
           <CodeEditor v-model="form.referenceSolution" />
 
           <UButton

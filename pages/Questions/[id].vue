@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useGlobalStore } from '@@/stores/global'
-import { useGetQuestionDetail, useDeleteQuestion, useGetReactionsList } from '@@/queries/questions'
+import { useGetQuestionDetail, useGetReactionsList, useGetSuggestedSolutions } from '@@/queries/questions'
 import ReactionBar from '@@/components/Questions/ReactionBar.vue'
 import CommentsTree from '~/components/Questions/CommentsTree.vue'
 import ProfileSidebar from '~/components/layout/ProfileSidebar.vue'
 import type { ReactionType } from '~/models/questionModel'
 
 const route = useRoute()
-const router = useRouter()
 const store = useGlobalStore()
+const questionId = route.params.id as string
+const suggestedSolutions = ref<any[]>([])
+const showSuggested = ref(false)
 
 const sidebarOpen = ref(false)
-const showDeleteConfirm = ref(false)
 
 const id = computed(() => route.params.id as string)
-const questionId = id.value
 const reactions = ref<Partial<Record<ReactionType, number>>>({})
 const myReaction = ref<ReactionType | null>(null)
 const { data, refresh, status } = useGetQuestionDetail(questionId)
@@ -60,15 +60,17 @@ const fetchReactions = async () => {
 
 onMounted(fetchReactions)
 
-const confirmDelete = async () => {
-  if (!q.value) return
-  const { execute, status } = useDeleteQuestion(q.value._id)
-  await execute()
-  if (status.value === 'success') {
-    showDeleteConfirm.value = false
-    router.push('/profile/student')
+const fetchSuggestedSolutions = async () => {
+  const { execute } = useGetSuggestedSolutions(questionId)
+  const res = await execute()
+
+  if (res?.data?.data?.length) {
+    suggestedSolutions.value = res.data.data
+    showSuggested.value = true
   }
 }
+
+onMounted(fetchSuggestedSolutions)
 
 const BASE_URL = 'https://skill-track-gr0b.onrender.com'
 const resolveImage = (path?: string | undefined) =>
@@ -196,6 +198,10 @@ const resolveImage = (path?: string | undefined) =>
             Question not found
           </p>
         </div>
+        <SuggestedQuestions
+          v-if="showSuggested"
+          :solutions="suggestedSolutions"
+        />
       </div>
     </main>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, markRaw, shallowRef } from 'vue'
 
 import CompanyTask from '../CompanyTask.vue'
 import Posts from '@/components/Profile/tabs/Posts.vue'
@@ -7,27 +7,29 @@ import Followers from '@/components/Profile/tabs/Followers.vue'
 
 const { profile } = useCompanyProfile()
 const storage = useGlobalStore()
+
 const currentUser = computed(() => ({
   _id: storage.id,
   role: storage.role,
 }))
 
 const tabs = [
-  { name: 'Posts', component: Posts },
-  { name: 'Tasks', component: CompanyTask },
-  { name: 'Follow', component: Followers },
+  { name: 'Posts', component: markRaw(Posts) },
+  { name: 'Tasks', component: markRaw(CompanyTask) },
+  { name: 'Follow', component: markRaw(Followers) },
 ]
 
+const activeTab = shallowRef(tabs[0])
+
+const userId = computed(() => profile.value?.profile?.user?._id || null)
+
 const isMyProfile = computed(() =>
-  currentUser.value._id === profile.value?.profile.user._id,
+  !!userId.value && currentUser.value._id === userId.value,
 )
 
-const canFollow = computed(() =>
-  !isMyProfile.value,
-)
+const canFollow = computed(() => !isMyProfile.value)
 
-const userId = computed(() => profile.value?.profile?.user?._id)
-const activeTab = ref(tabs[0])
+const canRender = computed(() => !!userId.value)
 </script>
 
 <template>
@@ -47,9 +49,17 @@ const activeTab = ref(tabs[0])
     </button>
   </div>
 
-  <component
-    :is="activeTab.component"
-    v-if="userId"
-    :user-id="profile?.profile?.user?._id"
-  />
+  <div v-if="canRender">
+    <component
+      :is="activeTab.component"
+      :key="`${activeTab.name}-${userId}`"
+      :user-id="userId"
+      :posts="profile?.posts || []"
+      :is-owner="isMyProfile"
+    />
+  </div>
+
+  <div v-else class="py-8 text-center text-gray-500">
+    Loading...
+  </div>
 </template>

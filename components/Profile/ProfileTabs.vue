@@ -9,11 +9,7 @@ import Followers from '@/components/Profile/tabs/Followers.vue'
 import Question from '@/components/Profile/tabs/Question.vue'
 
 const store = useGlobalStore()
-const { profile } = useProfile()
-
-const isOwner = computed(() => {
-  return profile.value?.user?._id === store.id
-})
+const { profile, posts, questions, isOwner } = useProfile()
 
 const tabs = [
   { name: 'Profile', component: markRaw(Portfolio) },
@@ -46,7 +42,7 @@ const activeTab = ref(tabs[0])
     :is="activeTab.component"
     :user-id="profile?.user?._id"
     :is-owner="isOwner"
-    :questions="profile?.questions || []"
-    :posts="profile?.posts || []"
+    :questions="questions || []"
+    :posts="posts || []"
   />
 </template>

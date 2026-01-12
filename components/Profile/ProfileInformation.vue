@@ -133,7 +133,7 @@ const submitEvaluation = async () => {
   if (!profile.value) return
 
   try {
-    await $fetch('http://127.0.0.1:5000/api/evaluate', {
+    await $fetch('https://skill-track-gr0b.onrender.com/api/evaluate', {
       method: 'POST',
       headers: {
       Authorization: `Bearer ${useGlobalStore().token}`,
