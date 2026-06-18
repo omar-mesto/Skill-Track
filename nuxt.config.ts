@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   modules: ['@pinia/nuxt', '@nuxt/eslint', '@nuxt/ui-pro', 'pinia-plugin-persistedstate/nuxt'],
   ssr: false,
-  devtools: { enabled: true },
+  // devtools: { enabled: true },
   app: {
     baseURL: '/',
   },

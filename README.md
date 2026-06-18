@@ -1,75 +1,27 @@
-# Nuxt Minimal Starter
+# Skill-Track Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+The frontend interface for **Skill-Track**, a modern digital platform designed to help students document their achievements, manage projects, and showcase verified skills.
 
-## Setup
+## Tech Stack
+- **Framework:** Nuxt.js (Vue.js)
+- **Styling:** Tailwind CSS, Nuxt UI, Vuetify
+- **State Management:** Pinia
+- **Animation:** GSAP
+- **Mobile Support:** Capacitor
+- **Language:** TypeScript
 
-Make sure to install dependencies:
+## Backend Integration
+This application connects to the Skill-Track backend service. To ensure full functionality, please make sure the backend is running.
+- [Skill-Track Backend Repository](https://github.com/dljenhajhanan-lab/Skill-Track)
 
-```bash
-# npm
-npm install
+## Project Showcase
 
-# pnpm
-pnpm install
+| Dashboard | Profile Page | Leaderboard |
+| :---: | :---: | :---: |
+| ![Dashboard](images/home-page.jpg) | ![Profile](images/profile-page.jpg) | ![Leaderboard](images/leaderBoard.png) |
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Getting Started
+1. Clone the repository: `git clone [YOUR_FRONTEND_REPO_URL]`
+2. Install dependencies: `npm install`
+3. Configure your `.env` file (API endpoints, Firebase credentials).
+4. Start the development server: `npm run dev`
