@@ -23,7 +23,7 @@ This application connects to the Skill-Track backend service. To ensure full fun
 ## Getting Started
 
 
-1. Clone the repository: `git clone [YOUR_FRONTEND_REPO_URL]`
+1. Clone the repository: `git clone [[YOUR_FRONTEND_REPO_URL]](https://github.com/omar-mesto/Skill-Track.git)`
 2. Install dependencies: `npm install`
 3. Configure your `.env` file (API endpoints, Firebase credentials).
 4. Start the development server: `npm run dev`
