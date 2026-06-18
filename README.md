@@ -18,9 +18,11 @@ This application connects to the Skill-Track backend service. To ensure full fun
 
 | Dashboard | Profile Page | Leaderboard |
 | :---: | :---: | :---: |
-| ![Dashboard](images/home-page.jpg) | ![Profile](images/profile-page.jpg) | ![Leaderboard](images/leaderBoard.png) |
+| <img src="https://github.com/user-attachments/assets/31ecdcb0-9066-4039-bac6-d26a3e0cb327" width="200" /> | <img src="https://github.com/user-attachments/assets/563bd4c8-100a-4bb7-a0b3-58e6a0269e58" width="200" /> | <img src="https://github.com/user-attachments/assets/70182621-4075-4fe8-a78a-ab9fe667c33d" width="200" /> |
 
 ## Getting Started
+
+
 1. Clone the repository: `git clone [YOUR_FRONTEND_REPO_URL]`
 2. Install dependencies: `npm install`
 3. Configure your `.env` file (API endpoints, Firebase credentials).
